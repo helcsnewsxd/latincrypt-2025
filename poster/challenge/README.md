@@ -19,73 +19,81 @@ breaking this verification protocol.
 To reduce complexity of understanding this problem, we've to see that this
 server has three methods to connect and use as an user: _initialization_,
 _rotation_, and _judgement_. To think about it, we can reduce it as independent
-smaller subproblems of the same type, where te server executes the methods once
+smaller subproblems of the same type, where the server executes the methods once
 in the order they were mentioned. So, for each part we've this structure:
 
-<div style="background-color:#2a2a2a; padding:10px; border-radius:5px; font-family:monospace;">
-<span style="font-size:18px; font-weight:bold;">Initialization module</span>
-<hr style="border: 1px solid #555; margin: 5px 0 15px 0;" />
+<div><hr />
+<div align="center"><h4>
+  
+  **Initialization module**
+</h4></div>
 
 <!-- prettier-ignore-start -->
-&nbsp;&nbsp;**Output**: $n$ <br/><br />
-&nbsp;&nbsp;$g = 2$ <br />
-&nbsp;&nbsp;$p,q$ random primes with $512$ bits <br />
-&nbsp;&nbsp;$n = pq$ <br />
-&nbsp;&nbsp;$a,b,s$ random integer numbers in range $[0,p)$&nbsp;&nbsp;<br />
-&nbsp;&nbsp;$f = x \mapsto (ax + b) \pmod{p}$ <br />
-&nbsp;&nbsp;$\textbf{return }n$
+&nbsp;&nbsp; **Output**: $n$ <br/><br />
+&nbsp;&nbsp; $g = 2$ <br />
+&nbsp;&nbsp; $p,q$ random primes with $512$ bits <br />
+&nbsp;&nbsp; $n = pq$ <br />
+&nbsp;&nbsp; $a,b,s$ random integer numbers in range $[0,p)$&nbsp;&nbsp;<br />
+&nbsp;&nbsp; $f = x \mapsto (ax + b) \pmod{p}$ <br />
+&nbsp;&nbsp; $\textbf{return }n$
 
 <!-- prettier-ignore-end -->
 
-</div>
-&nbsp;
-<div style="background-color:#2a2a2a; padding:10px; border-radius:5px; font-family:monospace;">
-<span style="font-size:18px; font-weight:bold;">Rotation module</span>
-<hr style="border: 1px solid #555; margin: 5px 0 15px 0;" />
+<hr /></div>
+
+<div><hr />
+<div align="center"><h4>
+  
+  **Rotation module**
+</h4></div>
 
 <!-- prettier-ignore-start -->
-&nbsp;&nbsp;**Output**: $\text{spins}, \text{states}$ <br/><br />
-&nbsp;&nbsp;$\text{spins} = [5,3,23,13,24,6,10,9,7,4,19,16]$ <br />
-&nbsp;&nbsp;$\text{states} = [s]$ <br />
-&nbsp;&nbsp;$\textbf{foreach } k \in \text{spins }\textbf{do}$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;$\textbf{repeat }k\textbf{ times}$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$s\leftarrow f(s)$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;$\text{states} +\!\!+\!\!= [s]$<br />
-&nbsp;&nbsp;$\textbf{return }\text{spins}, \text{states}$
+&nbsp;&nbsp; **Output**: $\text{spins}, \text{states}$ <br/><br />
+&nbsp;&nbsp; $\text{spins} = [5,3,23,13,24,6,10,9,7,4,19,16]$ <br />
+&nbsp;&nbsp; $\text{states} = [s]$ <br />
+&nbsp;&nbsp; $\textbf{foreach } k \in \text{spins }\textbf{do}$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp; $\textbf{repeat }k\textbf{ times}$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp; $s\leftarrow f(s)$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp; $\text{states} \text{ ++= } [s]$<br />
+&nbsp;&nbsp; $\textbf{return }\text{spins}, \text{states}$
 
 <!-- prettier-ignore-end -->
 
-</div>
-&nbsp;
-<div style="background-color:#2a2a2a; padding:10px; border-radius:5px; font-family:monospace;">
-<span style="font-size:18px; font-weight:bold;">Judgement module</span>
-<hr style="border: 1px solid #555; margin: 5px 0 15px 0;" />
+<hr /></div>
+
+<div><hr />
+<div align="center"><h4>
+  
+  **Judgement module**
+</h4></div>
 
 <!-- prettier-ignore-start -->
-&nbsp;&nbsp;**Input**: $h,u,e,z\in\mathbb{N}_0 : u,h,z\not\equiv 0\pmod{n} \land e$ is in hexadecimal format <br/>
-&nbsp;&nbsp;**Output**: flag or error <br/><br />
-&nbsp;&nbsp;$e_{10}$ is the decimal form of $e$<br />
-&nbsp;&nbsp;$J_1 = (u == g^z\cdot h^{e_{10}} \pmod{n})$ <br />
-&nbsp;&nbsp;$J_2 = (e == \text{SHA256}(\text{bytes}(g) +\!\!+ \text{bytes}(n) +\!\!+ \text{bytes}(u)).\text{hex}())$ <br />
-&nbsp;&nbsp;$\textbf{if }J_1 \land J_2\textbf{ then}$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;$\textbf{return }\text{flag}$<br />
-&nbsp;&nbsp;$\textbf{else}$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;$\textbf{return }\text{error}$
+&nbsp;&nbsp; **Input**: $h,u,e,z\in\mathbb{N}\_0 : u,h,z\not\equiv 0\pmod{n} \land e$ is in hexadecimal format <br/>
+&nbsp;&nbsp; **Output**: flag or error <br/><br />
+&nbsp;&nbsp; $e_{10}$ is the decimal form of $e$<br />
+&nbsp;&nbsp; $J_1 = (u == g^z\cdot h^{e_{10}} \pmod{n})$ <br />
+&nbsp;&nbsp; $J_2 = (e == \text{SHA256}(\text{bytes}(g) \text{ ++ } \text{bytes}(n) \text{ ++ } \text{bytes}(u)).\text{hex}())$ <br />
+&nbsp;&nbsp; $\textbf{if }J_1 \land J_2\textbf{ then}$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp; $\textbf{return }\text{flag}$<br />
+&nbsp;&nbsp; $\textbf{else}$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp; $\textbf{return }\text{error}$
 
 <!-- prettier-ignore-end -->
 
-</div>
+<hr /></div>
 
 <br />
 Graphically, this protocol can be seen as:
 
-<div align="center" style="background-color:#2a2a2a; padding:10px; border-radius:5px; font-family:monospace;">
-<span style="font-size:18px; font-weight:bold;">Samsara's identification protocol</span>
-<hr style="border: 1px solid #555; margin: 5px 0 15px 0;" />
+<div align="center"><hr />
+<h4>
+  
+  **Samsara's identification protocol**
+</h4>
 
 ![Samsara protocol](./../assets/samsara-protocol.svg)
 
-</div>
+<hr /></div>
 
 ## Solution
 
@@ -102,7 +110,7 @@ Let us focus in the _Rotation_ method. Since it uses LCG to create random
 numbers, this is the weakest part of the system. We doesn't know any term of the
 linear function, but we only have some non consecutive terms of the sequence and
 its positions. Notice that the position in the sequence of $k$-th value we know,
-is $\sum\limits_{i=0}^k M_i$.
+is $\sum_{i=0}^k M_i$.
 
 Let be $s_k = f^{(k)}(s) = \overbrace{f\circ\dots\circ f}^{k\text{ times}}(s)$
 the terms that we've. Then, using the geometric series formula with $a \neq 1$
@@ -128,24 +136,23 @@ with some useful probability.
 Let say $T,S$ two of these values. Since $T=pX$ and $S=pY$ for some
 $X,Y \in \mathbb{N}$, we know that $gcd(S,T) = p \iff gcd(X,Y)=1$. Therefore,
 since the probability that two random numbers are coprime is
-$\frac{6}{\pi^2}\approx61\%$, we've a good probability to get $p$ with a little
+$\frac{6}{\pi^2} \approx 0.61$, we've a good probability to get $p$ with a little
 quantity of tries.
 
-> [!note] More information about the last property
->
-> It can be read in the
+> [!note]
+> More information about the last property can be read in the
 > [Wikipedia website](https://en.wikipedia.org/wiki/Coprime_integers#Probability_of_coprimality)
 > or, if you want more details, in the
 > [Advanced Number Theory with Appications book](https://books.google.com.ar/books?id=6I1setlljDYC&pg=PA220&redir_esc=y#v=onepage&q&f=false).
 
 With that in mind, now we've to think about how to get these $R$-values. Let be
-$A,B,C,D,E,F,G,H \in \mathbb{N}_0$, one way to do that is obtaining these from
-$\left\{\sum\limits_{i=0}^k M_i\right\}_{k=0}^{\# M}$, such that:
+$A,B,C,D,E,F,G,H \in \mathbb{N}\_0$, one way to do that is obtaining these from
+$\left\lbrace\sum_{i=0}^k M_i\right\rbrace_{k=0}^{\text{len}(M)}$, such that:
 
 $$
 \begin{aligned}
 0 &\equiv (s_A-s_B)(s_C-s_D) - (s_E-s_F)(s_G-s_H) &\pmod{p} \\
-  &\equiv \left(s+\frac{b}{a-1}\right)^2 \left[(a^A-a^B)(a^C-a^D) - (a^E-a^F)(a^G-a^H)\right] &\pmod{p}
+  &\equiv \left(s+\frac{b}{a-1}\right)^2 \left\[(a^A-a^B)(a^C-a^D) - (a^E-a^F)(a^G-a^H)\right\] &\pmod{p}
 \end{aligned}
 $$
 
@@ -155,44 +162,46 @@ that $R\equiv 0 \pmod{p}$ and $R \neq 0$. Expanding terms, the condition for
 $A,B,C,D,E,F,G,H\in\mathbb{N}_0$ to hold the equivalence is:
 
 $$
-\{A+C,B+D\} = \{E+G,F+H\},\quad \{A+D,B+C\} = \{E+H,F+G\}
+\lbrace A+C,B+D\rbrace = \lbrace E+G,F+H\rbrace,\quad \lbrace A+D,B+C\rbrace = \lbrace E+H,F+G\rbrace
 $$
 
-Let be $m = \#M + 1 = 13$, then the easier way to get this values from $M$ is
+Let be $m = \text{len}(M) + 1 = 13$, then the easier way to get this values from $M$ is
 trying all the possibilities with an algorithm $O(m^8)$, i.e., approximately
 $2^{29.6}\approx 10^{8.91}$ operations.
 
 However, for a faster way to get them, the idea is to use an $O(m^6)$ algorithm
 for average case. The algorithm is:
 
-<div style="background-color:#2a2a2a; padding:10px; border-radius:5px; font-family:monospace;">
-<span style="font-size:18px; font-weight:bold;">Get useful exponent combinations</span>
-<hr style="border: 1px solid #555; margin: 5px 0 15px 0;" />
+<div><hr />
+<div align="center"><h4>
+  
+  **Get useful exponent combinations**
+</h4></div>
 
 <!-- prettier-ignore-start -->
-&nbsp;&nbsp;**Input**: $S = \left\{\sum\limits_{i=0}^k M_i\right\}_{k=0}^{\# M}$ <br/>
-&nbsp;&nbsp;**Output**: $R$ list with all tuples $(A,B,C,D,E,F,G,H)$ that holds the equivalence property.<br/><br />
-&nbsp;&nbsp;$R \leftarrow \emptyset$ <br />
-&nbsp;&nbsp;$L \leftarrow \emptyset$ (hash dictionary) <br />
-&nbsp;&nbsp;$\textbf{foreach }(x,y)\in S^2\textbf{ do}$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;$L[x+y]+\!\!+\!\!=[(x,y)]$ <br />
-&nbsp;&nbsp;$\textbf{foreach }(a,b,c,d)\in S^4\textbf{ do}$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;$\textbf{foreach }(e,g)\in L[a+c]\land(f,h)\in L[b+d]\textbf{ do}$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\textbf{if }\{a+b,d+c\} == \{e+h,f+g\}\textbf{ then}$<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$R +\!\!+\!\!= [(a,b,c,d,e,f,g,h)]$<br />
-&nbsp;&nbsp;$\textbf{return }R$
+&nbsp;&nbsp; **Input**: $S = \left\lbrace\sum_{i=0}^k M_i\right\rbrace_{k=0}^{\text{len}(M)}$ <br/>
+&nbsp;&nbsp; **Output**: $R$ list with all tuples $(A,B,C,D,E,F,G,H)$ that holds the equivalence property.<br/><br />
+&nbsp;&nbsp; $R \leftarrow \emptyset$ <br />
+&nbsp;&nbsp; $L \leftarrow \emptyset$ (hash dictionary) <br />
+&nbsp;&nbsp; $\textbf{foreach }(x,y)\in S^2\textbf{ do}$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp; $L[x+y] \text{ ++= } [(x,y)]$ <br />
+&nbsp;&nbsp; $\textbf{foreach }(a,b,c,d)\in S^4\textbf{ do}$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp; $\textbf{foreach }(e,g)\in L[a+c]\land(f,h)\in L[b+d]\textbf{ do}$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp; $\textbf{if }\lbrace a+d,b+c\rbrace == \lbrace e+h,f+g\rbrace\textbf{ then}$<br />
+&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp; $R \text{ ++= } [(a,b,c,d,e,f,g,h)]$<br />
+&nbsp;&nbsp; $\textbf{return }R$
 
 <!-- prettier-ignore-end -->
 
-</div>
-&nbsp;
+<hr /></div>
 
-> [!note] Why the complexity is $O(m^6)$ for average case?
->
+> [!note]
+> **Why the complexity is $O(m^6)$ for average case?**
+> 
 > The search over $S^4$ space is $O(m^4)$. Also, the average size for each list
 > into $L$ entries is $O(m)$ unless the distribution of $S$ values is such that
 > all sums are equal and it isn't like that (however, if it happens, we can put
-> a time limit to run). The, we do another $O(m^2)$ search. Finally, this is why
+> a time limit to run). Then, we do another $O(m^2)$ search. Finally, this is why
 > the complexity is $O(m^6)$, because $S$ is well distributed.
 
 Since $m=13$, it's faster to get the possible combinations. With the
@@ -206,19 +215,20 @@ of LCG, we're able to get private primes $p$ and $q$.
 
 ### Second part: Identification protocol
 
-In this part, we'll focus in the _judgement_ method. This is a non-interaactive
+In this part, we'll focus in the _judgement_ method. This is a non-interactive
 protocol of Girault's proof of knowledge using Fiat-Shamir heuristic where the
 prover creates the random $k$-bit challenge $e$ using domain-separated hash
-function over $\{g,N,h,u\}$ parameters, as can be seen in the following figure.
+function over $\lbrace g,N,h,u\rbrace$ parameters, as can be seen in the following figure.
 
-<div align="center" style="background-color:#2a2a2a; padding:10px; border-radius:5px; font-family:monospace;">
-<span style="font-size:18px; font-weight:bold;">Girault's non-interactive protocol</span>
-<hr style="border: 1px solid #555; margin: 5px 0 15px 0;" />
+<div align="center"><hr />
+<h4>
+  
+  **Girault's non-interactive protocol**
+</h4>
 
 ![Girault's non-interactive protocol](./../assets/girautls-protocol.svg)
 
-</div>
-&nbsp;
+<hr /></div>
 
 In this specific case of server implementation, $e$ isn't calculated with hash
 using all parameters because $h$ isn't used. So, this allows us to do a powerful
@@ -244,8 +254,7 @@ $\phi(N)=(p-1)(q-1)$. Also, we've to check existence of this inverse modular by
 checking if $\gcd(e,\phi(N))=1$. If it isn't holds, we can try with another
 random value $u$ until the hash has this property.
 
-> [!note] A way to choose better values
->
+> [!note]
 > If we choose $z = \phi(N)$, then $g^z \equiv 1 \pmod{N}$, so
 > $u \equiv h^e \pmod{N}$ and we've to compute less things because now
 > $h \equiv u^{e_\text{inv}} \pmod{N}$.
