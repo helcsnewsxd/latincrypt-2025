@@ -6,7 +6,7 @@ from functools import reduce
 from collections import defaultdict
 from hashlib import sha256 as Hash
 
-SV = process(["python3", "./samsara-challenge.py"])
+SV = process(["python3", "./public-server.py"])
 DBG = False
 
 

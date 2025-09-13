@@ -9,6 +9,11 @@ congruential generator) with the non-interactive
 (adapted applying
 [Fiat-Shamir transformation](https://www.zkdocs.com/docs/zkdocs/protocol-primitives/fiat-shamir/)).
 
+<!-- prettier-ignore -->
+> [!note]
+> All the images are made to be seen in dark mode, so if you aren't able
+> to see them, try changing GitHub theme.
+
 ## Statement
 
 We're given an access to connect to the server and we've its code (without known
@@ -136,9 +141,10 @@ with some useful probability.
 Let say $T,S$ two of these values. Since $T=pX$ and $S=pY$ for some
 $X,Y \in \mathbb{N}$, we know that $gcd(S,T) = p \iff gcd(X,Y)=1$. Therefore,
 since the probability that two random numbers are coprime is
-$\frac{6}{\pi^2} \approx 0.61$, we've a good probability to get $p$ with a little
-quantity of tries.
+$\frac{6}{\pi^2} \approx 0.61$, we've a good probability to get $p$ with a
+little quantity of tries.
 
+<!-- prettier-ignore -->
 > [!note]
 > More information about the last property can be read in the
 > [Wikipedia website](https://en.wikipedia.org/wiki/Coprime_integers#Probability_of_coprimality)
@@ -152,7 +158,7 @@ $\left\lbrace\sum_{i=0}^k M_i\right\rbrace_{k=0}^{\text{len}(M)}$, such that:
 $$
 \begin{aligned}
 0 &\equiv (s_A-s_B)(s_C-s_D) - (s_E-s_F)(s_G-s_H) &\pmod{p} \\
-  &\equiv \left(s+\frac{b}{a-1}\right)^2 \left\[(a^A-a^B)(a^C-a^D) - (a^E-a^F)(a^G-a^H)\right\] &\pmod{p}
+  &\equiv \left(s+\frac{b}{a-1}\right)^2 \left[(a^A-a^B)(a^C-a^D) - (a^E-a^F)(a^G-a^H)\right] &\pmod{p}
 \end{aligned}
 $$
 
@@ -165,9 +171,9 @@ $$
 \lbrace A+C,B+D\rbrace = \lbrace E+G,F+H\rbrace,\quad \lbrace A+D,B+C\rbrace = \lbrace E+H,F+G\rbrace
 $$
 
-Let be $m = \text{len}(M) + 1 = 13$, then the easier way to get this values from $M$ is
-trying all the possibilities with an algorithm $O(m^8)$, i.e., approximately
-$2^{29.6}\approx 10^{8.91}$ operations.
+Let be $m = \text{len}(M) + 1 = 13$, then the easier way to get this values from
+$M$ is trying all the possibilities with an algorithm $O(m^8)$, i.e.,
+approximately $2^{29.6}\approx 10^{8.91}$ operations.
 
 However, for a faster way to get them, the idea is to use an $O(m^6)$ algorithm
 for average case. The algorithm is:
@@ -195,14 +201,15 @@ for average case. The algorithm is:
 
 <hr /></div>
 
+<!-- prettier-ignore -->
 > [!note]
 > **Why the complexity is $O(m^6)$ for average case?**
-> 
+>
 > The search over $S^4$ space is $O(m^4)$. Also, the average size for each list
 > into $L$ entries is $O(m)$ unless the distribution of $S$ values is such that
 > all sums are equal and it isn't like that (however, if it happens, we can put
-> a time limit to run). Then, we do another $O(m^2)$ search. Finally, this is why
-> the complexity is $O(m^6)$, because $S$ is well distributed.
+> a time limit to run). Then, we do another $O(m^2)$ search. Finally, this is
+> why the complexity is $O(m^6)$, because $S$ is well distributed.
 
 Since $m=13$, it's faster to get the possible combinations. With the
 combinations that generates $R_i$ non zero values, we can get a guess for $p$
@@ -218,7 +225,8 @@ of LCG, we're able to get private primes $p$ and $q$.
 In this part, we'll focus in the _judgement_ method. This is a non-interactive
 protocol of Girault's proof of knowledge using Fiat-Shamir heuristic where the
 prover creates the random $k$-bit challenge $e$ using domain-separated hash
-function over $\lbrace g,N,h,u\rbrace$ parameters, as can be seen in the following figure.
+function over $\lbrace g,N,h,u\rbrace$ parameters, as can be seen in the
+following figure.
 
 <div align="center"><hr />
 <h4>
@@ -254,6 +262,7 @@ $\phi(N)=(p-1)(q-1)$. Also, we've to check existence of this inverse modular by
 checking if $\gcd(e,\phi(N))=1$. If it isn't holds, we can try with another
 random value $u$ until the hash has this property.
 
+<!-- prettier-ignore -->
 > [!note]
 > If we choose $z = \phi(N)$, then $g^z \equiv 1 \pmod{N}$, so
 > $u \equiv h^e \pmod{N}$ and we've to compute less things because now
