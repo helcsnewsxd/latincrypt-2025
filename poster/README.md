@@ -8,8 +8,9 @@ poster itself and LaTeX code for them. You'll be able to see it ordered below.
 
 <div align="center">
 
-| Material | Links                                                |
-| -------- | ---------------------------------------------------- |
-| Abstract | [LaTeX](./abstract.tex) <br /> [PDF](./abstract.pdf) |
+| Material      | Links                                                                                                                                        |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Abstract      | [LaTeX](./abstract.tex) <br /> [PDF](./abstract.pdf)                                                                                         |
+| CTF challenge | [README](./challenge/README.md) <br /> [Public server](./challenge/public-server.py) <br /> [Solution implementation](./challenge/solver.py) |
 
 </div>
