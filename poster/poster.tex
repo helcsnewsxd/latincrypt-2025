@@ -1,0 +1,227 @@
+\documentclass[a0paper,portrait]{baposter}
+
+\usepackage{relsize}
+\usepackage{url}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{fontawesome5}
+\usepackage{amsmath,amssymb}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric}
+
+\graphicspath{{assets}}
+
+\begin{document}
+
+%%% General Poster Settings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% Eye Catcher, Title, Authors and University Images %%%%%%%%%%%%%%%%%%%%%%
+\begin{poster}{
+  columns=2,
+	grid=false,
+	borderColor=uniblue,
+	headerColorOne=uniblue,
+	headerColorTwo=uniblue,
+	headerFontColor=white,
+  headerheight=14em,
+	boxColorOne=white,
+  boxpadding=1em,
+	headershape=rounded,
+	headerfont=\Large\textsf,
+	textborder=rounded,
+	background=shadetb,
+  bgColorOne=uniblue!10,
+  bgColorTwo=uniblue!30,
+	headerborder=open,
+  boxshade=plain,
+  eyecatcher=true
+}
+%%% Eye Cacther %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{
+}
+%%% Title %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\smaller Pedagogy behind crypto CTF challenges \\ and a way to improve them}
+%%% Authors %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{
+  \vspace{1em}
+  Emanuel Nicolás Herrador\\
+	{\smaller emanuel.nicolas.herrador@unc.edu.ar}
+}
+%%% Logo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\begin{minipage}{28.0em}
+    \includegraphics[height=4.4em]{famaf-unc-logo.png}
+  \end{minipage}
+}
+
+%%% What's CTF? %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{What's CTF?}{name=whats-ctf,column=0,row=0}{
+  \begin{itemize}
+    \item Capture The Flag is a competition for cybersecurity field.
+    \item Problems are solved obtaining \textit{flags} (words with specific format)
+      and they are given when we broke a weak protocol, corrupted file or system for it.
+    \item Problem categories:
+  \end{itemize}
+  \begin{center}
+    \begin{tikzpicture}[
+      node distance=0.4cm and 0.5cm,
+      every node/.style={
+        draw=uniblue!70,
+        shape=rectangle,
+        fill=uniblue!70,
+        text=white,
+        minimum width=2.2cm,
+        minimum height=1cm,
+        font=\footnotesize\bfseries,
+        align=center
+      }
+    ]
+
+      % 1st column
+      \node (a1) {Web \\ Exploitation};
+      \node[below=of a1] (a2) {Binary \\ Exploitation};
+      \node[below=of a2] (a3) {Reverse \\ Engineering};
+
+      % 2nd column
+      \node[right=of a1] (b1) {Cryptography};
+      \node[below=of b1] (b2) {Forensics};
+      \node[below=of b2] (b3) {Hardware};
+
+      % 3rd column
+      \node[right=of b1] (c1) {OSINT};
+      \node[below=of c1] (c2) {Misc};
+      \node[below=of c2] (c3) {PPC};
+
+    \end{tikzpicture}
+  \end{center}
+}
+
+%%% Importance %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{Importance}{name=importance,column=0,below=whats-ctf}{
+  \begin{itemize}
+    \item Practical experience and exposure to real-world vulnerabilities or attacks.
+    \item Teamwork and community across social websites, jobs and universities.
+      A way to combine all the worlds of learning (self learning, academy, industry).
+    \item Worldwide competitions: \textit{DEF CON}, \textit{ICC}, \textit{ECSC},
+      \textit{Pwn20wn}, \textit{Google CTF}.
+    \item Gamification way to learn and teach:
+      \begin{itemize}
+        \item To improve playing in cybersecurity.
+        \item Discovering new attacks or ways to think problems.
+        \item Mixing theory, practice and tricks.
+      \end{itemize}
+    \item Used in a lot of universities for competitions, teach and generate more 
+      interest in cybersecurity field.
+  \end{itemize}
+}
+
+%%% Complexity for a problemsetter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{Complexity for a problemsetter}{name=complexity-for-a-problemsetter,column=0,below=importance}{
+  \begin{itemize}
+    \item Find interesting topics for problems.
+    \item Being creative and make it useful to learn.
+    \item Make it neither too easy nor too difficult.
+    \item Feasible to solve in the way we thought and, also, ensure it as unique to test
+      specific objective skills for evaluation.
+    \item Avoid being solved only with pre-existent automated tools or LLMs (as with \textit{ico}
+      problem of DEFCON finals 2025).
+  \end{itemize}
+}
+
+%%% How would you create a CTF challenge in your study field? %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{How would you create a chall in your study field?}{name=ctfs-suggestions,column=0,below=complexity-for-a-problemsetter}{
+  \begin{itemize}
+    \item CTF challs are a useful way to learn and teach each area of study.
+    \item Do you want to try creating one for teaching or share with partners?
+    \item Tell me more and some ideas! \underline{I'll be doing feedback until October 20}.
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=0.382\columnwidth]{qr-google-forms.png}
+  \end{center}
+}
+
+%%% Samsara %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{Crypto CTF challenge example: Samsara}{name=samsara,column=1,row=0}{
+  \begin{center}
+    {\large\textbf{International Cybersecurity Challenge 2024}} \\
+    (Santiago, Chile)
+
+    \vspace{0.5em}
+    {\small\textit{Topics}: Linear Congruential Generator, Non-interactive Girault's proof 
+    of knowledge (with Fiat-Shamir transformation) and Frozen Heart Vulnerability.}
+  \end{center}
+  \vspace{-2em}
+  \hhrule
+
+  \vspace{-0.5em}
+  {\large\textbf{Statement}}
+
+  Break the following protocol to capture the flag:
+  \begin{center}
+    \includegraphics[width=0.95\columnwidth]{samsara-protocol-black.png}
+  \end{center}
+  
+  \vspace{-2em}
+  \hhrule
+
+  \vspace{-0.5em}
+  {\large\textbf{Solution idea}}: We've two main parts. Let see each one separately.
+
+  \vspace{0.5em}
+  \textbf{First part} (Linear Congruential Generator)
+  \begin{itemize}
+    \item LCG with unknown parameters and are given non consecutive terms of
+      this sequence (with its positions).
+    \item Let be $s_k \! = \! f^{(k)}(s)$ the terms we have.
+      An useful property to use is $s_A - s_B \equiv (a^A-a^B)\left(s+\frac{b}{a-1}\right)\pmod{p}$.
+    \item Let $T \! = \! pX, S \! = \! pY$, then $\gcd(S,T) \! = \! p \! \iff \! \gcd(X,Y) \! = \! 1$.
+      Since the probability that two random numbers are coprime is $61\%$,
+      we've a good chance to get $p$ with a little quantity of $(T,S)$ tries.
+    \item Aiming $R : R \! \neq \! 0 \land R \! \equiv \! 0 \pmod{p}$,
+      we'll search for positions values $A,B,C,D,E,F,G,H \in \left\{\sum_{i=0}^k M_i\right\}_{k=0}^{\# M}$ such that:
+      \begin{equation*}
+          0 \equiv (s_A-s_B)(s_C-s_D)-(s_E-s_F)(s_G-s_H)
+            \equiv B^2 K\pmod{p}
+      \end{equation*}
+      where $B = s+\frac{b}{a-1}, K = (a^A-a^B)(a^C-a^D)-(a^E-a^F)(a^G-a^H)$.
+    \item Since $B \equiv 0 \pmod{p}$ is unlikely to happen, we aim for $p|K$. For that:
+      \begin{equation*}
+        \{A+C,B+D\} = \{E+G,F+H\} \land \{A+D,B+C\} = \{E+H,F+G\}
+      \end{equation*}
+
+      \vspace{-0.8em}
+    \item Let $m = \#M + 1$. The search can be done with bruteforce in $O(m^8)$,
+      but searching intelligently in $O(m^6)$.
+      The total number of useful combinations is $288$ and we're able 
+      to get $p$ and also $q = \frac{n}{p}$.
+  \end{itemize}
+
+  \textbf{Second part} (Girault's identification non-interactive protocol)
+  
+  \begin{itemize}
+    \item $h$ isn't used in hash and it's a weakness (\textit{Frozen Heart Vulnerability}).
+    \item Choosing random values $u,z$, we've $e = \text{Hash}(g,N,u)$ and we aim for
+      $h \equiv (u \cdot g^{-z})^{e_\text{inv}} \pmod{n}$ where $e_\text{inv} \equiv e^{-1} \pmod{\phi(n)}$
+      because:
+
+      \vspace{-1em}
+      \begin{equation*}
+        g^z \cdot h^e \equiv g^z \cdot \left((u \cdot g^{-z})^{e_\text{inv}}\right)^e \equiv g^z \cdot u \cdot g^{-z} \equiv u \pmod{n}
+      \end{equation*}
+
+
+      \vspace{-0.6em}
+    \item We can compute $e_\text{inv}$ easily with \textit{Extended Euclidean algorithm} because we know
+      $\phi(n)$.
+      If it doesn't exist, try another $u,z$ random values.
+    \item Sending these values to verifier, it should give us the flag message.
+  \end{itemize}
+
+  \textbf{Complete solution and implementation}
+
+  \begin{center}
+    \raisebox{-0.3em}{\Large\faGithub}\quad \url{github.com/helcsnewsxd/latincrypt-2025}
+  \end{center}
+}
+
+\end{poster}
+\end{document}

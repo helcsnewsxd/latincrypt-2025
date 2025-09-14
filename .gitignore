@@ -3,5 +3,6 @@
 **/*.fls 
 **/*.log 
 **/*.out
+**/*.xdv
 
 .python-version
