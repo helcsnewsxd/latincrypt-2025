@@ -23,7 +23,7 @@
 	headerColorOne=uniblue,
 	headerColorTwo=uniblue,
 	headerFontColor=white,
-  headerheight=14em,
+  headerheight=11em,
 	boxColorOne=white,
   boxpadding=1em,
 	headershape=rounded,
@@ -119,6 +119,8 @@
 \headerbox{Complexity for a problemsetter}{name=complexity-for-a-problemsetter,column=0,below=importance}{
   \begin{itemize}
     \item Find interesting topics for problems.
+    \item Problems related to protocol configurations or systems that are truly insecure in real life, 
+      and not just puzzle problems.
     \item Being creative and make it useful to learn.
     \item Make it neither too easy nor too difficult.
     \item Feasible to solve in the way we thought and, also, ensure it as unique to test
@@ -133,10 +135,12 @@
   \begin{itemize}
     \item CTF challs are a useful way to learn and teach each area of study.
     \item Do you want to try creating one for teaching or share with partners?
-    \item Tell me more! \underline{I'll be doing feedback until 31/10} (form closes on 10).
+    \item Do you have an idea for a CTF challenge? Tell me more!
+
+      \underline{I'll be giving feedback until 31/10} (form closes on 10).
   \end{itemize}
   \begin{center}
-    \includegraphics[width=0.382\columnwidth]{qr-google-forms.png}
+    \includegraphics[width=0.366\columnwidth]{qr-google-forms.png}
   \end{center}
 }
 
@@ -145,10 +149,6 @@
   \begin{center}
     {\large\textbf{International Cybersecurity Challenge 2024}} \\
     (Santiago, Chile)
-
-    \vspace{0.5em}
-    {\small\textit{Topics}: Linear Congruential Generator, Non-interactive Girault's proof 
-    of knowledge (with Fiat-Shamir transformation) and Frozen Heart Vulnerability.}
   \end{center}
   \vspace{-2em}
   \hhrule
@@ -156,7 +156,7 @@
   \vspace{-0.5em}
   {\large\textbf{Statement}}
 
-  Break the following protocol to capture the flag:
+  Get the flag from the following system:
   \begin{center}
     \includegraphics[width=0.95\columnwidth]{samsara-protocol-black.png}
   \end{center}
@@ -165,12 +165,43 @@
   \hhrule
 
   \vspace{-0.5em}
-  {\large\textbf{Solution idea}}: We've two main parts. Let see each one separately.
+  {\large\textbf{Solution}}: First, analyze the system.
+  We've two main parts, an LCG that give us data and a ZKP scheme.
+  The idea is to be able to use the last one to recover the flag from this server.
+  Let see each one separately.
 
   \vspace{0.5em}
-  \textbf{First part} (Linear Congruential Generator)
+  \textbf{Last part} (ZKP scheme)
+  
+  \vspace{-0.5em}
   \begin{itemize}
-    \item LCG with unknown parameters and are given non consecutive terms of
+    \item It's similar to a non-interactive \textit{Girault's proof of knowledge} (with \textit{Fiat-Shamir transformation}).
+      The idea is to be like an honest prover and create values that holds conditions $J_1$ and $J_2$.
+    \item $h$ isn't used in hash and it's a weakness (\textit{Frozen Heart Vulnerability}).
+    \item Choosing random values $u,z$, we've $e = \text{Hash}(g,n,u)$ and we aim for
+      $h \equiv (u \cdot g^{-z})^{e_\text{inv}} \pmod{n}$ where $e_\text{inv} \equiv e^{-1} \pmod{\phi(n)}$
+      because:
+
+      \vspace{-1em}
+      \begin{equation*}
+        g^z \cdot h^e \equiv g^z \cdot \left((u \cdot g^{-z})^{e_\text{inv}}\right)^e \equiv g^z \cdot u \cdot g^{-z} \equiv u \pmod{n}
+      \end{equation*}
+
+
+      \vspace{-0.6em}
+    \item We can compute $e_\text{inv}$ with \textit{Extended Euclidean algorithm} if we know
+      $\phi(n)$.
+      If it doesn't exist, try another $u,z$ random values.
+    \item Sending these values to verifier, it should give us the flag message.
+      So, from the first part we've to get $\phi(n)$ to solve this problem.
+  \end{itemize}
+
+  \vspace{-0.5em}
+  \textbf{First part} (Linear Congruential Generator)
+
+  \vspace{-0.5em}
+  \begin{itemize}
+    \item It's LCG with unknown parameters and are given non consecutive terms of
       this sequence (with its positions).
     \item Let be $s_k \! = \! f^{(k)}(s)$ the terms we have.
       An useful property to use is $s_A - s_B \equiv (a^A-a^B)\left(s+\frac{b}{a-1}\right)\pmod{p}$.
@@ -194,31 +225,13 @@
       but searching intelligently in $O(m^6)$.
       The total number of useful combinations is $288$ and we're able 
       to get $p$ and also $q = \frac{n}{p}$.
+      So, we finally get $\phi(n) = (p-1)(q-1)$.
   \end{itemize}
 
-  \textbf{Second part} (Girault's identification non-interactive protocol)
-  
-  \begin{itemize}
-    \item $h$ isn't used in hash and it's a weakness (\textit{Frozen Heart Vulnerability}).
-    \item Choosing random values $u,z$, we've $e = \text{Hash}(g,N,u)$ and we aim for
-      $h \equiv (u \cdot g^{-z})^{e_\text{inv}} \pmod{n}$ where $e_\text{inv} \equiv e^{-1} \pmod{\phi(n)}$
-      because:
-
-      \vspace{-1em}
-      \begin{equation*}
-        g^z \cdot h^e \equiv g^z \cdot \left((u \cdot g^{-z})^{e_\text{inv}}\right)^e \equiv g^z \cdot u \cdot g^{-z} \equiv u \pmod{n}
-      \end{equation*}
-
-
-      \vspace{-0.6em}
-    \item We can compute $e_\text{inv}$ easily with \textit{Extended Euclidean algorithm} because we know
-      $\phi(n)$.
-      If it doesn't exist, try another $u,z$ random values.
-    \item Sending these values to verifier, it should give us the flag message.
-  \end{itemize}
-
+  \vspace{-0.5em}
   \textbf{Complete solution and implementation}
-
+  
+  \vspace{-0.5em}
   \begin{center}
     \raisebox{-0.3em}{\Large\faGithub}\quad \url{github.com/helcsnewsxd/latincrypt-2025}
   \end{center}
