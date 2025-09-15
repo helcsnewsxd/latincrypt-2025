@@ -16,16 +16,16 @@ congruential generator) with the non-interactive
 
 ## Statement
 
-We're given an access to connect to the server and we've its code (without known
-the secret message, i.e., the flag). This code contains the
+We're given an access to connect to the server and we have its code (without
+known the secret message, i.e., the flag). This code contains the
 [public server version](./public-server.py). And the objective is get the flag
 breaking this verification protocol.
 
-To reduce complexity of understanding this problem, we've to see that this
+To reduce complexity of understanding this problem, we have to see that this
 server has three methods to connect and use as an user: _initialization_,
 _rotation_, and _judgement_. To think about it, we can reduce it as independent
 smaller subproblems of the same type, where the server executes the methods once
-in the order they were mentioned. So, for each part we've this structure:
+in the order they were mentioned. So, for each part we have this structure:
 
 <div><hr />
 <div align="center"><h4>
@@ -102,7 +102,7 @@ Graphically, this protocol can be seen as:
 
 ## Solution
 
-We've two main parts in this protocol:
+We have two main parts in this protocol:
 
 1. Information given by verifier (LCG)
 2. Identification protocol
@@ -118,7 +118,7 @@ its positions. Notice that the position in the sequence of $k$-th value we know,
 is $\sum_{i=0}^k M_i$.
 
 Let be $s_k = f^{(k)}(s) = \overbrace{f\circ\dots\circ f}^{k\text{ times}}(s)$
-the terms that we've. Then, using the geometric series formula with $a \neq 1$
+the terms that we have. Then, using the geometric series formula with $a \neq 1$
 assumption:
 
 $$
@@ -141,7 +141,7 @@ with some useful probability.
 Let say $T,S$ two of these values. Since $T=pX$ and $S=pY$ for some
 $X,Y \in \mathbb{N}$, we know that $gcd(S,T) = p \iff gcd(X,Y)=1$. Therefore,
 since the probability that two random numbers are coprime is
-$\frac{6}{\pi^2} \approx 0.61$, we've a good probability to get $p$ with a
+$\frac{6}{\pi^2} \approx 0.61$, we have a good probability to get $p$ with a
 little quantity of tries.
 
 <!-- prettier-ignore -->
@@ -151,9 +151,10 @@ little quantity of tries.
 > or, if you want more details, in the
 > [Advanced Number Theory with Appications book](https://books.google.com.ar/books?id=6I1setlljDYC&pg=PA220&redir_esc=y#v=onepage&q&f=false).
 
-With that in mind, now we've to think about how to get these $R$-values. Let be
-$A,B,C,D,E,F,G,H \in \mathbb{N}\_0$, one way to do that is obtaining these from
-$\left\lbrace\sum_{i=0}^k M_i\right\rbrace_{k=0}^{\text{len}(M)}$, such that:
+With that in mind, now we have to think about how to get these $R$-values. Let
+be $A,B,C,D,E,F,G,H \in \mathbb{N}\_0$, one way to do that is obtaining these
+from $\left\lbrace\sum_{i=0}^k M_i\right\rbrace_{k=0}^{\text{len}(M)}$, such
+that:
 
 $$
 \begin{aligned}
@@ -245,8 +246,8 @@ actually, don't know. The vulnerability is called
 [Frozen Heart Vulnerability](https://blog.trailofbits.com/2022/04/14/the-frozen-heart-vulnerability-in-giraults-proof-of-knowledge/).
 
 Our attack is choosing random values for both $u$ and $z$. Then, since $e$ is
-calculated without $h$, we compute $e = \text{Hash}(g,N,u)$. Next, we've to find
-an $h$ value such that $u \equiv g^z \cdot h^e \pmod{N}$ holds
+calculated without $h$, we compute $e = \text{Hash}(g,N,u)$. Next, we have to
+find an $h$ value such that $u \equiv g^z \cdot h^e \pmod{N}$ holds
 
 $$
 h \equiv (u \cdot g^{-z})^{e_\text{inv}} \pmod{N}
@@ -258,14 +259,14 @@ It works because:
 $$g^z \cdot h^e \equiv g^z \cdot \left((u \cdot g^{-z})^{e_\text{inv}}\right)^e \equiv g^z \cdot u \cdot g^{-z} \equiv u \pmod{N}$$
 
 To compute $e_\text{inv}$, we're able to do that easily because we know
-$\phi(N)=(p-1)(q-1)$. Also, we've to check existence of this inverse modular by
-checking if $\gcd(e,\phi(N))=1$. If it isn't holds, we can try with another
+$\phi(N)=(p-1)(q-1)$. Also, we have to check existence of this inverse modular
+by checking if $\gcd(e,\phi(N))=1$. If it isn't holds, we can try with another
 random value $u$ until the hash has this property.
 
 <!-- prettier-ignore -->
 > [!note]
 > If we choose $z = \phi(N)$, then $g^z \equiv 1 \pmod{N}$, so
-> $u \equiv h^e \pmod{N}$ and we've to compute less things because now
+> $u \equiv h^e \pmod{N}$ and we have to compute less things because now
 > $h \equiv u^{e_\text{inv}} \pmod{N}$.
 
 Finally, when we send these values to server (verifier), it should give us the
