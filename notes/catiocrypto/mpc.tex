@@ -1,0 +1,115 @@
+\input{../header.tex}
+
+\title{CatioCrypto 2025: Multi-Party Computation}
+\author{Emanuel Nicolás Herrador}
+\newcommand{\speaker}{Eduardo Soria-Vázquez}
+\date{26-27 Septiembre 2025}
+
+\begin{document}
+  \maketitle 
+  \noindent\begin{tabular}{@{}ll}
+    Autor & \theauthor \\
+    Speaker & \speaker
+  \end{tabular}
+
+  \section{Introducción}
+  Algunos \underline{ejemplos} acerca de qué se ocupa la criptografía son:
+  \begin{itemize}
+    \item \textit{Verifiable Computation}: Demostrar que se ha ejecutado un programa,
+      sin que quien lo verifique tenga que re-ejecutarlo.
+    \item \textit{Zero-Knowledge Proofs}: Similar a VC, pero quien demuestra 
+      hacer el cálculo pueden mantener algunos datos ocultos.
+    \item \textit{Secret Sharing}: Fragmentar un secreto entre varias entidades,
+      de tal forma que solo pueda reconstruirse si ciertos subconjuntos
+      de ellas acuerdan hacerlo.
+    \item \textit{Multi-Party Computation} (MPC): Calcular sobre datos ``sin verlos'',
+      de forma distribuida.
+    \item Otros: privacidad diferencial (DP), recuperación privada de información (PIR),
+      cifrado totalmente homomórfico (FHE), cifrado funcional (FE), time-lock puzzles,
+      blockchaings, criptomonedas, ...
+  \end{itemize}
+
+  \section{Multi-Party Computation}
+  \subsection{Protocolo MPC}
+  Un protocolo MPC consta de $n$ entidades que desconfían las unas de las otras y de modo
+  que cada una pueda aportar un valor $P_i$ secreto.
+  La idea/objetivo es calcular un función $f$ aplicada a estos valores en conjunto pero sin mostrarlos 
+  a otra de las entidades.
+
+  Una forma de resolverlo sin MPC es con una tercera parte de confianza, pero el 
+  problema es que no siempre existe.
+  Lo que vuelve difícil a MPC es la presencia de un adversario 
+  que participa y corrompe a ciertas entidades para coordinar su ataque:
+  \begin{itemize}
+    \item Corrupción pasiva: las entidades corruptas hacen lo que deben pero comparten 
+      información entre ellas para tratar de aprender más cosas sobre las demás entidades 
+    \item Corrupción activa: las entidades corruptas pueden actuar de forma arbitraria 
+      para sabotear los objetivos de seguridad
+  \end{itemize}
+  El \underline{objetivo} es lograr todas las propiedades que lograríamos con una tercera 
+  parte de confianza pero sin ella.
+
+  \subsection{Primitivas}
+  Algunas de las prmitivas usadas por MPC son:
+  \begin{itemize}
+    \item Garbled Circuits
+    \item Secret Sharing 
+    \item Oblivious Transfer 
+    \item Homomorphic Encryption
+  \end{itemize}
+
+  \subsubsection{Secret Sharing (compartición de secretos)}
+  \begin{definition}[Esquema de compartición de secretos]
+    Sea $\F$ un cuerpo finito y $n,t\in \Z : 0\leq t < n$.
+    Sean las entidades $P_1,\dots,P_n$ y un compartidor en posesión de un 
+    secreto $s\in\F$.
+    Un esquema $(n,t)$-umbral de compartición de secretos consta de las siguientes fases:
+    \begin{enumerate}
+      \item Fase de compartición: El Compartidor fragmenta $s$ en $n$ partes $s_1,\dots,s_n\in\F$
+        y la entidad $P_i$ recibe su parte $s_i\in\F$ 
+      \item Fase de reconstrucción: Al menos $t+1$ entidades envían su parte a quien quieran 
+        que reconstruya $s$.
+    \end{enumerate}
+
+    Y tal que satisface las siguientes propiedades:
+    \begin{itemize}
+      \item $t$-privacidad: Cualquier conjunto de a lo sumo $t$ partes no revela ninguna 
+        información sobre el secreto $s\in\F$
+      \item $(t+1)$-reconstrucción: Cualquier conjunto de $t+1$ partes determina de forma 
+        única el secreto $s\in\F$
+    \end{itemize}
+  \end{definition}
+  \begin{definition}[Esquema lineal de compartición de secretos]
+    Decimos que el esquema es \textit{lineal} si además satisface que $\forall s,t\in\F$
+    compartidos como $(s_1,\dots,s_n),(t_1,\dots,t_n)\in\F^n$, tenemos que 
+    $(s_1+t_1,\dots,s_n+t_n)$ es una compartición de $s+t\in\F$.
+  \end{definition}
+  \begin{remark}
+    Abusaremos notación y \underline{nos restringiremos} a esquemas de compartición de secretos 
+    que sean sobre un cuerpo finito $\F$, umbrales y lineales (sobre $\F$).
+    Además, usaremos la notación definida como $[s] := (s; s_1,\dots,s_n)$, de modo que 
+    $[s] + [t] = [s+t]$.
+  \end{remark}
+
+  \paragraph{Compartición de secretos aditiva}
+  Sea $F_p := (\Z/p\Z, +, \cdot),\ \Z/p\Z = (0,\dots,p-1),\ p$ nro. primo, el esquema es:
+  \begin{enumerate}
+    \item Fase de compartición:
+      \begin{enumerate}
+        \item Compartidor escoge de forma uniformemente aleatoria $s_1,\dots,s_n\in\F_p : s_1+\dots+s_n=s$.
+        \item Compartidor envía la parte $s_i$ a $P_i$
+      \end{enumerate}
+    \item Fase de reconstrucción:
+      \begin{enumerate}
+        \item Cada $P_i$ envía $s_i$ a la entidad que quieren que reconstruya el secreto 
+        \item Dicha entidad calcula $s=s_1+\dots+s_n$
+      \end{enumerate}
+  \end{enumerate}
+  \begin{remark}
+    Notar que el umbral $t$ debe ser $n-1$ para que sea reconstruible teniendo todos los 
+    pedacitos de secretos.
+    El hecho de que no sea reconstruible con $n-1$ entidades se reduce al OTP porque si 
+    tenemos $s_1,\dots,s_{n-1}\in\F_p$ elegidos uniformemente aleatorios, entonces 
+    $s_n = s - (s_1+\dots+s_{n-1})$ es también uniformemente aleatorio.
+  \end{remark}
+\end{document}
