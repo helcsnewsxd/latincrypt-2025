@@ -1,0 +1,241 @@
+\input{../header.tex}
+
+\title{CatioCrypto 2025: Curvas Elípticas}
+\author{Emanuel Nicolás Herrador}
+\newcommand{\speaker}{Armando Faz Hernandez}
+\date{26-27 Septiembre 2025}
+
+\begin{document}
+  \maketitle 
+  \noindent\begin{tabular}{@{}ll}
+    Autor & \theauthor \\
+    Speaker & \speaker
+  \end{tabular}
+
+  \section{Introducción}
+  \subsection{Criptografía simétrica}
+  Clave compartida $k$ entre A y B  para intercambiar cifrados.
+  El tercero no puede leerlos sin saber $k$.
+  El estándar para este tipo de cifrado es el AES (cifrado por bloques).
+  Hay 3 variantes según tamaño de llave (128, 192, 256) y también según el modo que se usa.
+  \begin{remark}
+    Algoritmos como DES o RC4 usados antes, ya son vulnerables y se conoce cómo romperlos.
+  \end{remark}
+  Los modos, por ejemplo, son CBC (encadenado por bloques), CTR (counter mode), GCM (Galois counter mode).
+  Este último se usa para cifrado autenticado.
+
+  \subsection{Función de resumen}
+  Mapean cadenas de bits de tamaño arbitrario en cadeas de tamaño fijo, i.e., $h : \{0,1\}^* \to \{0,1\}^n$.
+  Esta es conocida como función de resumen o hash.
+  \begin{definition}[Funciones hash criptográficas]
+    Dada una función hash $h$, esta es criptográfica si los siguientes problemas son ``difíciles'':
+    \begin{itemize}
+      \item \textbf{1era Preimagen}: Dado un resumen $r$, encontrar mensaje $M$ tal que $r = h(M)$
+      \item \textbf{2da Preimagen}: Dado un mensaje $M_1$, encontrar un mensaje diferente $M_2$ tal que $h(M_1) = h(M_2)$
+      \item \textbf{Resistencia a colisón}: Encontrar dos mensajes diferentes $M_1, M_2$ tal que $h(M_1) = h(M_2)$
+    \end{itemize}
+  \end{definition}
+  \begin{remark}
+    El conjunto de estándares usado es SHA (Secure Hash Algorithm).
+    Dependiendo el tipo de salida son SHA-0, SHA-1, SHA-2 o SHA-3.
+  \end{remark}
+  También existen funciones con salida extendible (resúmenes de tamaño
+  arbitrario, i.e., vos elegís el tamaño que querés que tenga), las 
+  cuales son SHAKE128 y SHAKE256.
+  Notar que no son funciones de resumen.
+
+  \subsection{Criptografía de llave pública}
+  Se basa en funciones que son fáciles de calcular pero difíciles de invertir.
+  Algunos ejemplos son RSA, Diffie-Hellman los cuales se basan en factorización de primos 
+  y logaritmo discreto respectivamente.
+
+  \subsection{Teoría de grupos}
+  \begin{definition}[Grupo]
+    Dado un conjunto no vacío $G$ y operación binaria $*$, $(G, *)$ es un grupo si cumple:
+    \begin{itemize}
+      \item \textbf{Cerrado}: $\forall a,b\in G,\ a*b \in G$
+      \item \textbf{Asociativo}: $\forall a,b,c\in G,\ (a*b)*c = a*(b*c)$
+      \item \textbf{Identidad}: $\exists e\in G : \forall a\in G,\ e*a = a$ (con $e$ identidad)
+      \item \textbf{Inversos}: $\forall a\in G, \exists b\in G : a*b=e$
+    \end{itemize}
+    El grupo es conmutativo si $\forall a,b\in G,\ a*b=b*a$.
+  \end{definition}
+
+  \begin{definition}[Subgrupo]
+    Dado un grupo $(G, *)$, si $H \subseteq G$ y $(H, *)$ es un grupo, entonces es un subgrupo.
+  \end{definition}
+  
+  Los términos exponenciación de grupo y multiplicación escalar son usados indistintamente.
+  Sin embargo, si el grupo es conmutativo se acostumbra a usar la notación aditiva ($+$).
+
+  \begin{definition}[Grupo cíclico]
+    Un grupo es cíclico si puede ser generado por un elemento del grupo.
+    Denotamos por $\gen{g}$ al grupo generado por $g\in G$:
+    \begin{equation*}
+      \gen{g} = \{g^k : k \in \Z\}
+    \end{equation*}
+  \end{definition}
+  \begin{remark}
+    Si se habla del orden de $G$, es el número de elementos de $G$.
+    Si se habla del orden de $g$, este es el número de elementos de $\gen{g}$
+  \end{remark}
+
+  \subsubsection{Logaritmo discreto}
+  \begin{definition}[Logaritmo discreto]
+    Dado $G$ grupo cíclico generado por $g$, sabemos que $\forall h\in G, \exists k \in \Z : h = g^k$.
+    El logaritmo discreto de $h$ con respecto a $g$ es la operación que dados $g, h$
+    obtiene $k=\log_g(h) \in \Z$.
+  \end{definition}
+  \begin{remark}
+    Puesto que $g$ genera $n=\abs{\gen{g}}$ elementos, entonces $k\in\{0,\dots,n-1\}$.
+  \end{remark}
+
+  \paragraph{DLP (problema del logaritmo discreto)}
+  Dados $g,h \in G : h=g^k$, encontrar el $k$.
+
+  Si este problema es difícil, entonces nos puede servir para la criptografía de llave pública.
+  Algunos algoritmos para resolverlo son:
+  \begin{itemize}
+    \item Paso de bebé, paso de gigante 
+    \item Cálculo del índice
+    \item Algoritmo de Pohlig-Hellman 
+    \item Algoritmo Rho de Pollard 
+    \item Algoritmo de Shor
+  \end{itemize}
+
+  \section{Curvas Elípticas}
+  \begin{definition}[Curva Ellíptica - Forma general]
+    Una curva elíptica está definida sobre un cuerpo $k$ por la ecuación
+    \begin{equation*}
+      E/k:\ y^2 + a_1xy + a_3y = x^3 + a_2x^2 + a_4x + a_6
+    \end{equation*}
+    donde $a_i \in k$ con $i=1,2,3,4,6$ y tal que su discriminante cumple $\Delta\neq 0$.
+  \end{definition}
+  \begin{remark}
+    Notar que cada punto tiene a lo sumo dos valores en el eje vertical.
+  \end{remark}
+  
+  Existen modelos que representan algunas curvas elípticas:
+  \begin{itemize}
+    \item \textit{Weierstrass} (Modelo más general): $y^2 = x^3 + ax + b$
+    \item \textit{Montgomery} (Curvas con punto de orden 2): $y^2 = x^3 + ax^2 + bx$
+    \item \textit{Twisted Edwards} (Punto de orden 4): $ax^2 + y^2 = 1 + dx^2y^2$
+    \item \textit{Twisted Hessian}, \textit{intersecciones de Jacobi}, \textit{Kummer}, etc.
+  \end{itemize}
+  Vamos a trabajar con el modelo de Weierstrass.
+  \begin{theorem}[Teorema de Hasse]
+    La cantidad de puntos $N$ de una curva elíptica $E$ sobre $\F_q$ cumple que $\abs{N-(q+1)}\leq 2\sqrt{q}$
+  \end{theorem}
+  \begin{remark}
+    Con esto, existen algoritmos para hallar $N$ dados $E$ y $\F_q$, como otros para hallar 
+    $E$ dados $N$ y $\F_q$.
+  \end{remark}
+
+  \subsection{Curvas elípticas como grupo}
+  \begin{definition}[Grupo de curva elíptica]
+    El conjunto de puntos racionales sobre $k$ de la curva $E$ es denota como $E(k) = \{(x,y) \in E\} \cup \{O\}$ 
+    donde $O$ es el punto al infinito.
+    Los puntos de la curva forman un grupo $(E(k), +)$ con $O$ como la identidad del grupo.
+  \end{definition}
+
+  A continuación podemos ver diferentes operaciones en este grupo.
+  Se puede hacer algebraicamente pero veamos un par de ejemplos geométricos.
+
+  \paragraph{Suma de puntos}
+  Consideramos $P, Q$ puntos en la curva. Para calcular $P+Q$, geométricamente hacemos:
+  \begin{enumerate}
+    \item Trazar la recta que pasa por $P$ y $Q$ 
+    \item Sea $R$ el 3er punto que interseca a la curva, trazamos la recta vertical allí 
+    \item El punto donde se interseca ahora es $P + Q$
+  \end{enumerate}
+  \begin{remark}
+    Sale de la idea de que, sean $P, Q, R$ los puntos que una recta interseca a la curva, 
+    entonces $P+Q+R = 0$.
+    Luego, $-R = P+Q$ y también se cumple que si $R = (x_R, y_R)$ entonces $-R = (x_R, -y_R)$.
+  \end{remark}
+
+  \paragraph{Doblado de puntos}
+  Es el caso especial de suma si queremos hacer $P+P = 2P$.
+  Para ello, la recta que usamos es la tangente a la curva que pasa por $P$ y el 
+  procedimiento sigue igual que antes.
+
+  \paragraph{Multiplicación escalar}
+  Dado $P\in E, k\in \Z$, la multiplicación escalar es $kP = \overbrace{P + \dots + P}^{k\text{ veces}}$.
+  Existen algoritmos lineales en la cantidad de bits que lo calculan como el de \textit{Montgomery} 
+  que escanea del más al menos significativo y el de \textit{Joye} que lo hace al revés.
+  (la idea de este último es similar a la de exponenciación binaria).
+
+  \paragraph{Logaritmo discreto en curvas elípticas (ECDLP)}
+  Dados $P, Q \in E : Q = kP$, queremos encontrar $k$.
+  El algoritmo de Pollard es el mejor algoritmo conocido para resolver ECDLP cuya 
+  complejidad es $O\left(\sqrt{\# E(\F_p)}\right)$ donde $\# E(\F_q) \approx p$ es el 
+  número de puntos de la curva.
+  \begin{remark}
+    Este es un problema fuerte de resolver y es lo que vamos a usar para hacer 
+    criptografía.
+    Por ejemplo, si $p\approx 2^{256}$ entonces se requieren de $2^{128}$ operaciones para 
+    resolverlo.
+  \end{remark}
+
+  Este problema se resuelve con el \textit{algoritmo cuántico de Shor} (aunque aún no hay 
+  computadoras cuánticas relevantes que rompan la criptografía actual).
+
+  \section{Curvas Elípticas en criptografía}
+  Koblitz y Miller sugirieron ECC para criptografía.
+  Esta brinda un nivel de seguridad equivalente a RSA usando llaves más pequeñas 
+  (por ej., para un nivel de seguridad de 128 bits, RSA necesita llaves de 3072 bits mientras 
+  que ECC 256 bits).
+  Otro uso fue el de Montgomery, el cual utilizó curvas para criptoanálisis (factorización de enteros).
+
+  \subsection{Protocolo Diffie-Hellman con Curvas de Montgomery}
+  El $RFC-7748$ define dos funciones para calcular un secreto compartido:
+  $X25519$ (llaves de 32 bytes) y $X448$ (llaves de 56 bytes).
+  El esquema es el siguiente (donde $K$ es la llave compartida):
+
+  \begin{center}
+  \begin{tikzpicture}[node distance=50mm]
+    \node[box] (ana) {
+      (Ana) \\
+      $a \overset{\$}{\leftarrow} \{0,1\}^{256}$ \\
+      $K_A \leftarrow X25519(9,a)$ \\
+      $K = X25519(K_B, a)$
+    };
+    \node[box, right=of ana] (beto) {
+      (Beto) \\
+      $b \overset{\$}{\leftarrow} \{0,1\}^{256}$ \\
+      $K_B \leftarrow X25519(9,b)$ \\
+      $K = X25519(K_A, b)$
+    };
+
+    \draw[->] ($(ana.north east)+(0,-14mm)$) -- ($(beto.north west)+(0,-14mm)$) node[midway, above] {$K_A$};
+    \draw[->] ($(beto.north west)+(0,-20mm)$) -- ($(ana.north east)+(0,-20mm)$) node[midway, above] {$K_B$};
+  \end{tikzpicture}
+  \end{center}
+  \begin{remark}
+    Internamente, $X$ calcula una multiplicación escalar.
+  \end{remark}
+
+  \todo{Completar con el uso de curvas en firmas (ECDSA) que mencionó en las filminas.}
+
+  \subsection{Aplicaciones}
+  Algunas aplicaciones de ECC son:
+  \begin{itemize}
+    \item Protocolos de internet (DNS y DNSSEC, TLS y PKI, SSH, IPSec)
+    \item Cifrado end to end
+    \item Blockchain (Smart contracts, virtual machines, computación verificable)
+    \item Autenticación 
+    \item Autorización 
+    \item Pruebas de conocimiento
+  \end{itemize}
+
+  \section{Libros recomendados}
+  La lista de libros recomendados es:
+  \begin{itemize}
+    \item Guide to Elliptic Curve Cryptography
+    \item Handbook of Elliptic and Hyperelliptic Curve Cryptography 
+    \item The Arithmetic of Elliptic Curves 
+    \item Introduction to Elliptic Curves 
+    \item Elliptic Curve Cryptography for Developers
+  \end{itemize}
+
+\end{document}
