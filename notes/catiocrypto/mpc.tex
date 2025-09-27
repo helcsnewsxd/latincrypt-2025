@@ -112,4 +112,331 @@
     tenemos $s_1,\dots,s_{n-1}\in\F_p$ elegidos uniformemente aleatorios, entonces 
     $s_n = s - (s_1+\dots+s_{n-1})$ es también uniformemente aleatorio.
   \end{remark}
+
+  Las \textit{ventajas} de la compartición de secretos aditiva es que tiene un tamaño 
+  óptimo de las partes (cada uno es tan grande como el secreto), por lo cual es 
+  muy eficiente a nivel computacional.
+  Sin embargo, algunas \textit{contras} son que el umbral es siempre fijo ($t = n-1$,
+  por lo que no podemos elegir),
+  que no tiene propiedades multiplicativas y que tampoco ofrece resistencia ante 
+  adversarios activos.
+
+  \paragraph{Compartición de secretos replicada (con 3 entidades)}
+  Se puede generalizar con $n > 3$ pero se suele usar de este modo.
+  El esquema es:
+  \begin{enumerate}
+    \item Fase de compartición:
+      \begin{enumerate}
+        \item Compartidor escoge de forma uniformemente aleatoria $s_1,s_2,s_3\in\F_p : s_1+s_2+s_3=s$.
+        \item Compartidor envía las partes $s_{i-1},s_{i+1}$ a $P_i$
+      \end{enumerate}
+    \item Fase de reconstrucción:
+      \begin{enumerate}
+        \item Cada $P_i$ envía $s_{i-1}$ y $s_{i+1}$ a la entidad que quieren que reconstruya el secreto 
+        \item Dicha entidad calcula $s=s_1+s_2+s_3$
+      \end{enumerate}
+  \end{enumerate}
+  \begin{remark}
+    El umbral $t$ es $1$ porque es $1$-privado y $2$-reconstruible.
+  \end{remark}
+
+  Las \textit{ventajas} son que:
+  \begin{itemize}
+    \item Tiene propiedades multiplicativas 
+    \item Ante un adversario pasivo, la reconstrucción puede requerir de menos comunicación 
+      que la compartición de secretos aditiva (por la redundancia).
+      Como ejemplo, si es alguien interno (de las $3$ entidades), entonces solo requiere de 
+      un valor, lo cual es una mejora en el coste de comunicación respecto al esquema lineal.
+      Si la entidad es externa, se mantiene.
+    \item Tiene propiedades de detección de errores.
+      Ante un adversario activo, se puede detectar si una entidad se desvía del protocolo.
+      En el caso de que no envíe nada, por la redundancia se salva.
+      Pero si envía datos incorrectos, podemos detectarlo y frenar el cálculo, aunque no 
+      reconstruir.
+  \end{itemize}
+  En cuanto a los \textit{inconvenientes}, el principal es que el tamaño de las partes es 
+  superior al del secreto y crece rapidísimo en la  generalización:
+  $\binom{n}{t}$ elementos de $\F_p$ por entidad.
+  Notar que en el caso $t=1,n=3$, el tamaño de las partes es el doble que del secreto.
+
+  \paragraph{Compartición de secretos de Shamir ($n$ entidades)}
+  Sea $F_p := (\Z/p\Z, +, \cdot),\ \Z/p\Z = (0,\dots,p-1),\ p > n$ nro. primo, el esquema es:
+  \begin{enumerate}
+    \item Fase de compartición:
+      \begin{enumerate}
+        \item Compartidor escoge de forma uniformemente aleatoria $f \in \F_p[X]$ de grado $t$ tal que $f(0) = s$
+        \item Compartidor envía a cada $P_i$ su parte $f(i) = s_i$
+      \end{enumerate}
+    \item Fase de reconstrucción:
+      \begin{enumerate}
+        \item Cada $P_i$ envía $s_i$ a la entidad que quieren que reconstruya el secreto 
+        \item Dicha entidad obtiene $f \in \F_p[X]$ mediante interpolación y recupera el secreto 
+          evaluando $f(0) = s$
+      \end{enumerate}
+  \end{enumerate}
+  \begin{remark}
+    El umbral $t$ es el grado del polinomio, dado que con $t$ puntos no somos capaces de determinar el 
+    polinomio de grado $t$ con interpolación, mientras que con $t+1$ sí se puede.
+    Además, esta compartición es \textit{lineal}.
+  \end{remark}
+
+  Se puede usar la Matriz de Vandermonde para demostrar linearidad (incluso isomorfismo),
+  $t$-privacidad y $(t+1)$-reconstruibilidad.
+  Recordemos que una matriz de Vandermonde es:
+  \begin{equation*}
+    Van^{u\times v}(a_1,\dots,a_u) = \begin{bmatrix}
+      a_1^0 & \dots & a_1^{v-1} \\ 
+      \vdots & \vdots & \vdots \\ 
+      a_u^0 & \dots & a_u^{v-1}
+    \end{bmatrix}
+  \end{equation*}
+  Tal que si $u = v$ y $\forall i\neq j, a_i \neq a_j$ entonces $Van^{u \times v}(a_1,\dots,a_u)$
+  es invertible.
+  Además lo son también todas sus submatrices cuadradas.
+  Con ello, se puede ver que sea $f(X) = \sum_{i=0}^t f_i \cdot X^i$ el polinomio en $\F_p[X]$ de grado $\leq t$,
+  entonces $(f(a_1),\dots,f(a_{t+1})) = Van^{u\times v}(a_1,\dots,a_{t+1})\cdot (f_0,\dots,f_t)$.
+
+  Las \textit{ventajas} de este esquema de compartición son que el tamaño de cada parte
+  es igual al tamaño del secreto, tiene propiedades multiplicativas y es equivalente 
+  a un código de Reed Solomon (por lo que en presencia de un adversario activo se pueden 
+  explotar las propiedades de detección y corrección de errores).
+  En cuanto a las \textit{contras}, esta se basa principalmente en que la reconstrucción es 
+  algo costosa respecto a los otros dos esquemas vistos, y de que el tamaño del cuerpo tiene 
+  que ser mayor que el grado (sino la matriz de Vandermonde dejaría de ser invertible).
+
+  \subsection{Propiedades y características}
+  Las métricas de eficiencia para los protocolos de MPC son:
+  \begin{itemize}
+    \item Cantidad de datos que se comunican (complejidad de comunicación).
+      Suele ser el cuello de botella de los protocolos y es lo que se busca bajar.
+    \item Número de rondas de comunicación (complejidad de rondas) 
+    \item Complejidad computacional
+  \end{itemize}
+  La combinación de las distintas dimensiones determina la eficiencia que es posible (en ocasiones,
+  tenemos cotas inferiores) o directamente si es posible o imposible hacer MPC con dicha selección.
+  Veamos cada un de las dimensiones que puede tener el protocolo.
+
+  \paragraph{Modelo de computación}
+  Tenemos distintas formas de representar la computación.
+  Podemos considerar circuitos booleanos (generalmente considerando and y or), circuitos aritméticos 
+  (sobre cuerpos o anillos finitos) o memoria de acceso aleatorio (RAM).
+  Cualquier función o programa se puede expresar en cualquiera de los tres modelos.
+
+  \paragraph{Fases en el protocolo}
+  Podemos considerar las siguientes posibilidades:
+  \begin{itemize}
+    \item Paradigma ``Offline-Online'': Existe una fase de preprocesado (``offline'') en la cual no es 
+      necesario que las entidades hayan decidido sus inputs para la función.
+      La fase ``online'' comienza cuando las entidades conocen sus inputs, y generalmente esta puede 
+      ejecutarse más rápido debido al trabajo avanzado en el preprocesado.
+      Hay dos tipos principales de preprocesados: dependiente o independiente de la función.
+      En el primer caso se asume el conocimiento de la función que se calculará en la fase online mientras
+      que en la segunda no (en realidad se sabe algo pero es una cota).
+    \item Sin preprocesado: existe una única fase, por lo que no se avanza antes de conocer los inputs.
+  \end{itemize}
+
+  \paragraph{Suposiciones sobre la red}
+  Podemos hacer dos tipos de suposiciones sobre la red del MPC:
+  \begin{itemize}
+    \item Síncrona: Las entidades están de acuerdo en la misma hora actual y se establecen 
+      momentos límite para la recepción de mensajes.
+      Existe la noción de ``rondas'' de comunicación, por lo que si después de $t$ tiempo no 
+      llegan los mensajes entonces se supone que no los envió.
+    \item Asíncrona
+  \end{itemize}
+
+  \paragraph{Proporción de entidades corruptas}
+  \begin{itemize}
+    \item Mayoría deshonesta: Al menos una entidad es honesta, es decir $t < n$
+    \item Mayoría honesta: Al menos una mayoría (estricta) de las entidades son honestas,
+      i.e. $t < \frac{n}{2}$
+    \item Mayoría honesta $\frac{2}{3}$: Al menos dos tercios de las entidades son honestas, i.e., $t < \frac{n}{3}$
+  \end{itemize}
+
+  \paragraph{Capacidades del adversario}
+  Es lo que vimos anteriormente:
+  \begin{itemize}
+    \item Seguridad pasiva 
+    \item Seguridad activa
+  \end{itemize}
+
+  \paragraph{Movilidad del adversario}
+  \begin{itemize}
+    \item Seguridad estática: El adversario especifica qué entidades van a ser corrompidas antes de comenzar 
+      la ejecución del protocolo de MPC.
+    \item Seguridad adaptativa: El adversario puede decidir qué entidades corromper o controlar de forma adaptativa 
+      durante la ejecución del protocolo.
+  \end{itemize}
+
+  \paragraph{Capacidad computacional del adversario}
+  \begin{itemize}
+    \item Seguridad incondicional: La seguridad se basa en teoría de la información y estadística.
+      No se impone ninguna restricción en cuanto a la cantidad de recursos computacionales del adversario.
+      Imposible de obtener cuando la mayoría es deshonesta (es un teorema).
+      Se divide en seguridad estadística (probabilidad despreciable) o perfecta.
+    \item Seguridad computacional: El adversario es modelado como una máquina de Turing probabilística en tiempo polinomial
+      en vez de tener una capacidad limitada. Es decir, la seguridad reposa sobre la hipótesis de que algún problema 
+      específico es difícil de resolver en tiempo polinomial.
+  \end{itemize}
+
+  \paragraph{Garantías sobre el output}
+  Hay tres posibilidades:
+  \begin{itemize}
+    \item Entrega garantizada: las entidades honestas siempre reciben el output 
+    \item Justo: si las entidades corruptas reciben el output, entonces también lo reciben las honestas.
+      El adversario puede decidir si todos tienen el output o ninguno.
+    \item Seguridad con aborto: las entidades corruptas pueden recibir el output mientras impiden que las honestas lo hagan.
+      Pueden parar el protocolo cuando quieran.
+      Aquí puede darse la situación en las que las entidades corruptas aprendan el output pero las demás no.
+  \end{itemize}
+
+  \vspace{2em}
+  Con ello, es sabido cuáles combinaciones de las dimensiones son factibles o no de realizar.
+  \todo{Agregar el cuadro de MPC de las filminas}
+
+  \subsection{MPC a partir de compartición de secretos en circuitos aritméticos}
+  Para calcular una función, lo que se hace s:
+  \begin{enumerate}
+    \item Cada entidad comparte sus inputs secretos correspondientes 
+      Sucesivamente calculamos los valores intermedios y outputs del circuito, en forma
+      de secreto compartido.
+      Las operaciones lineales no requieren de interacción si el esquema de compartición de
+      secretos es lineal.
+      Productos u operaciones no lineales requieren (casi siempre) interacción.
+    \item Reconstruimos los outputs a las entidades que les correspondan dichos resultados.
+  \end{enumerate}
+
+  \paragraph{Compartición de secretos de Shamir: Muliplicación}
+  Sean $[x]_t, [y]_t$ dos secretos compartidos mediante Shamir para umbral $t$, entonces si cada $P_i$
+  calcula localmente $x_i \cdot y_i$, las entidades obtienen \underline{de forma segura} el secreto compartido $[x \cdot y]_{2t}$.
+  \begin{remark}
+    Lo complejo es que si el grado del polinomio supera $n$ entonces ya no es posible realizar la reconstrucción.
+    Por esto tenemos que tener muy presente que el grado de los secretos jamás supere $n$.
+  \end{remark}
+
+  \paragraph{MPC en el estilo de BGW, seguridad pasiva}
+  Estamos considerando circuitos aritméticos (modelo de computación), red síncrona, sin preprocesado y con el
+  adversario pasivo y estático, vamos a alcanzar seguridad perfecta con una mayoría honesta ($t < \frac{n}{2}$).
+  La idea general es la vista antes para protocolos de compartición de secretos con multiplicación.
+
+  El protocolo de multiplicación considera que sean $[x]_t,[y]_t$ dos valores a multiplicar entonces:
+  \begin{enumerate}
+    \item Las entidades calculan de forma local $[z]_{2t} = [x \cdot y]_{2t}$.
+      Denotemos las partes del secreto como $(z_1,\dots,z_n)$.
+    \item Cada entidad $P_i$ usa el esquema de Shamir para compartir su parte $[z_i]_t$ con el resto de entidades.
+    \item De forma local, las entidades calculan $[x\cdot y]_t = \sum_{i=1}^{2t+1} \lambda_i \cdot [z_i]_t$,
+      donde $\lambda_i$ son los coeficientes de interpolación de Lagrange.
+  \end{enumerate}
+  \begin{remark}
+    Se impone $t < \frac{n}{2}$ para que el grado del polinomio $[z]_{2t}$ no exceda $n$ dado que sino no tendríamos 
+    la suficiente cantidad de puntos para interpolar.
+    El protocolo tampoco es seguro contra un adversario activo.
+  \end{remark}
+
+  \paragraph{MPC en el estilo de BGW, seguridad activa}
+  Es un protocolo muy parecido al anterior, solo que tenemos un preprocesado (independiente de $f$, únicamente con
+  cota superior de cantidad de multiplicaciones que hay), adversario activo, seguridad con aborto (podría ser mejor y
+  obtenerse output garantizado), y con un umbral de corrupción $t < \frac{n}{3}$.
+  Las herramientas que se usan son la idea general para protocolos basados en compartición de secretos, compartición de 
+  secretos de Shamir y pares de reducción de grado.
+
+  En el esquema del protocolo el adversario puede comportarse mal de tres formas distintas:
+  \begin{itemize}
+    \item En la fase de compartición:
+      \begin{itemize}
+        \item No compartir su secreto: no se puede hacer nada
+        \item Mentir y enviar un input incorrecto: no se puede hacer nada pero a lo sumo se puede crear un circuito que verifique
+          si el input satisface las condiciones correctas (como estar en cierto rango)
+        \item Enviar un secreto como un polinomio de grado distinto de $t$: nos vamos a concentrar en esto.
+          Vamos a usar el preprocesado para esto.
+      \end{itemize}
+    \item En la fase de cálculo, el inconveniente viene en donde nos encontramos con una puerta de multiplicación (o no lineal)
+      que requiera interacción y donde podamos mentir (o al final con el output).
+      En este caso, como vimos antes, el protocolo de multiplicación no es seguro contra un adversario activo.
+    \item Fase de reconstrucción de los outputs: el mismo, mentir.
+  \end{itemize}
+
+  Podemos pensar los esquemas de Shamir como algoritmos de detección de errores de Reed Solomon, por lo que podremos ser capaces de
+  identificar el error y la entidad corrupta.
+  Veamos cómo solucionar cada parte:
+  \begin{itemize}
+    \item Protocolo de repartición de inputs: Consideramos lo siguiente
+      \begin{itemize}
+        \item Preprocesado: un secreto correctamente compartido $[r]_t$ donde $r$ es uniformemente aleatorio y 
+          únicamente conocido por $P_i$
+        \item Inputs: $x$, el input secreto de $P_i$ que nos queremos asegurar de que se comparte correctamente 
+        \item Outputs: $[x]_t$
+      \end{itemize}
+      Luego, vamos a hacer:
+      \begin{enumerate}
+        \item $P_i$ hace broadcast del valor $e = x - r$ (un canal de broadcast se asegura de que todas las entidades 
+          reciben el mismo mensaje, se puede hacer simplemente con que todas las entidades hagan echo)
+        \item De forma local, las entidades calculan $[x]_t = e + [r]_t$
+      \end{enumerate}
+    \item Protocolo de multiplicación (double random share): Consideramos el preprocesado dado por
+      \begin{itemize}
+        \item Preprocesado: un par de reducción de grado $([r]_t,[r]_{2t})$ donde $r$ es uniformemente aleatorio 
+        \item Inputs: $[x]_t, [y]_t$ valores a multiplicar 
+        \item Outputs: $[x \cdot y]_t$
+      \end{itemize}
+      Luego, vamos a hacer:
+      \begin{enumerate}
+        \item Las entidades calculan de forma local $[x \cdot y]_{2t}$
+        \item También de forma local, calculan $[z]_{2t} = [x \cdot y]_{2t} - [r]_{2t}$
+        \item Las entidades reconstruyen públicamente $z$ (canal de broadcast), aplicando detección de errores 
+        \item De forma local, las entidades calculan $[x \cdot y]_t = z + [r]_t$
+      \end{enumerate}
+      \begin{remark}
+        Para el paso $2$, notemos que $r$ es desconocido por todos y se debe usar una sola vez (sin volverlo a repetir).
+        En cuanto al paso $3$, podemos ver $[z]_d$ como una palabra en un Código de Reed-Solomon $[n,d+1,n-d]$.
+        Por ello, cuando $t < \frac{n}{3}$ entonces se pueden detectar errores con $d \leq 2t$ y corregir con $d \leq t$.
+
+        La analogía entre Shamir y Reed-Solomon se puede ver como:
+
+        \begin{center}
+          \begin{tabular}{|c|c|c|}
+            \hline
+            Variable & Shamir & Reed-Solomon \\ 
+            \hline
+            n & Cantidad de entidades & Longitud del código \\ 
+            t & Cantidad de corruptos & Cantidad de errores \\ 
+            d & Grado del polinomio & Dimensión - 1 \\ 
+              & & \\ 
+            $t \geq n-d$ & Inseguro & No hay detección de errores \\
+            $t < n-d$ & ``Seguridad con aborto'' & Detección de errores \\
+            $2t < n-d$ & Entrega garantizada & Existen algoritmos eficientes de corrección de errores \\
+            \hline
+          \end{tabular}
+        \end{center}
+
+        En la práctica, lo que se trata de hacer es una reducción de jugadores sucesivamente.
+        A diferencia del código de corrección de errores, la interactividad nos permite mayor posibilidad de detección.
+      \end{remark}
+  \end{itemize}
+
+  \paragraph{Protocolo de multiplicación (compartición aditiva)}
+  El protocolo de multiplicación, si tenemos mayoría deshonesta, se puede implementar usando compartición de secretos 
+  aditiva.
+  Para ello, digamos que el secreto es nota como $\gen{\cdot}$.
+  Luego, consideramos el preprocesado dado por:
+  \begin{itemize}
+    \item Preprocesado: $\gen{a},\gen{b}, \gen{c}$ con $c = a\cdot b,\ a,b \in \F$ (desconocidos)
+    \item Input: $\gen{x}, \gen{y}, \gen{\cdot}$ compartición de secretos aditiva
+  \end{itemize}
+  Luego la idea es tomar:
+  \begin{equation*}
+    \begin{aligned}
+      x \cdot y &= (x + a - a)(y + b - b) = (\varepsilon - a)(\rho - b) 
+                &= \varepsilon\rho - a\rho - \varepsilon b + ab
+    \end{aligned}
+  \end{equation*}
+  donde $\epsilon = x + a, \rho = y + b$.
+  Entonces, podemos tomar para la parte del cálculo secreto a: $\varepsilon \rho - \gen{a}\rho - \varepsilon \gen{b} + \gen{c}$
+  donde $\varepsilon, \rho$ pueden publicarse.
+  Con ello, el esquema sería:
+  \begin{enumerate}
+    \item Calcular $\gen{\varepsilon} = \gen{x} + \gen{a}$ y $\gen{\rho} = \gen{y} + \gen{b}$
+    \item Reconstruimos $\varepsilon, \rho$
+    \item Calculamos $\gen{x \cdot y} = \varepsilon\rho - \gen{a}\rho - \varepsilon\gen{b} + \gen{c}$ localmente.
+  \end{enumerate}
 \end{document}
