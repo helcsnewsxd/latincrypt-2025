@@ -12,6 +12,7 @@ LatinCrypt event (and previous schools). All the content is ordered below.
 | Elliptic Curves         | [LaTeX notes](./catiocrypto/elliptic-curves.tex) <br /> [PDF notes](./catiocrypto/elliptic-curves.pdf) |
 | Isogenies               | [Notes](./catiocrypto/isogenies.pdf)                                                                   |
 | Multi-Party Computation | [LaTeX notes](./catiocrypto/mpc.tex) <br /> [PDF notes](./catiocrypto/mpc.pdf)                         |
+| Zero-Knowledge Proofs   | [LaTeX notes](./catiocrypto/zkp.tex) <br /> [PDF notes](./catiocrypto/zkp.pdf)                         |
 
 </div>
 
