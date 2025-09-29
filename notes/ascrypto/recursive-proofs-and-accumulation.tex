@@ -1,0 +1,174 @@
+\input{../header-en.tex}
+
+\title{ASCrypto 2025: Recursive Proofs and Accumulation}
+\author{Emanuel Nicolás Herrador}
+\newcommand{\speaker}{Benedikt Bünz}
+\date{September 29-30 of 2025}
+
+\begin{document}
+  \maketitle 
+  \noindent\begin{tabular}{@{}ll}
+    Author & \theauthor \\
+    Speaker & \speaker
+  \end{tabular}
+
+  \todo{Add scheme figures from slides to make explanations clear.}
+
+  \section{SNARKs review}
+  We'll use SNARKs to construct our schemes here, so it's important to have this 
+  concepts in mind.
+  
+  The problem to solve is: given an $x$, exists a $w$ that makes the output true?
+  The prover want to prove that he knows the solution.
+  Here we'll working with non-interactive proofs when the proof is $\pi$ and we want 
+  $\abs{\pi} << \abs{w}$ and $\abs{\Vm_{\text{arg}}} << \abs{w}$ (succinct) because 
+  otherwise we can send just the witness and it works (with completeness and 
+  knowledge-soundness).
+  Then, verifier outputs $0$ or $1$ if it's true.
+
+  The properties we want are:
+  \begin{itemize}
+    \item Completeness: if $(x,w) \in R$ then $\Vm_{\text{arg}}\to 1$
+    \item Soundness: if $x \notin \Lm(R)$ then with high probability $\Vm_{\text{arg}} \to 0$
+    \item Knowledge-soundness (more general): we want to find the extractor that can 
+      access the prover and compute the witness ($w$). This is important in sites 
+      where the soundness is obvious.
+
+      An example of that can be is we want to prove if we know a hash collision.
+      Here there is a big difference between knowing existence and knowing the particular 
+      collision.
+  \end{itemize}
+
+  \section{Recursive proofs}
+  Consider we've two SKARK systems $(\Pm,\Vm),(\Pm',\Vm')$ (sometimes the same).
+  Then, a recursive proof is when $\Pm'$ proves that $\Vm$ accepted the pair $(x,\pi)$
+  (instance, proof) from $\Pm$. After that, it creates a proof $\pi'$ that must be 
+  verified by $\Vm'$.
+
+  Formally, $\Pm'$ proves that it knows a proof $\pi$ for a statement $x$
+  in a language indexed by a verification key $vk$
+  such that $\Vm$ accepts $\pi$ for $(x, vk)$
+  Knowledge-soundness of $(\Pm',\Vm')$ implies we can extract $\pi$.
+  We also says $\Vm$ as the recursive circuit.
+
+  In the following, we're showing some motivations about recursive proofs use and 
+  the cons of naive solutions.
+
+  \paragraph{Motivation 1: Prove sequential computations}
+  Here, we've a function $F$ that its applied $t$ times to our instance.
+  Then, we can break it in parts and each one has an specific witness.
+  The definition for an intermediate instance is $x_t = F^t(x_0;w_1,\dots,w_t)$ and we want 
+  to prove that we know this $w_1,\dots,w_t$.
+
+  We can made a \textit{naive solution} using SNARKs as a monolithic proof ($1$ proof).
+  The instance por $\Pm$ will be $x_t$ and then it give us a proof $\pi$.
+  I.e., instead of dividing $F$ computation $t$ times, we group all the instance 
+  together and therefore in this scheme we can avoid proof-size linearity in $t$.
+
+  The issues of this solution is that it's not memory-efficient (because I need to store all the 
+  intermediate computation in memory to create a proof).
+  Also, sometimes the prover is super-linear in $t \cdot \abs{F}$.
+  And the biggest issue is that additional steps requires reproving everything (it's bad because 
+  we don't save intermediate proofs to use it later, we should here recompute the entire history
+  proof). Then, the proofs are linear in the entire history of the computation and we don't want 
+  it.
+
+  \paragraph{Motivation 2: Handing off computation}
+  It's a similar description as before but here it isn't a line and each party makes 
+  the computation apart.
+  Here, each part wants to verify the inputs and some wants to check the entire computation.
+  The \textit{naive solution} is creating a proof (each party) and attach them.
+  However it will be linear in the number of steps.
+
+  \subsection{Incrementally verifiable computation (IVC)}
+  It's a way to solve the last problems efficiently avoiding this naive solutions.
+  In each step, when $F$ is using evaluating value $x_i$ then it also creates the
+  instance $x_{i+1}$ and the proof $\pi_{i+1}$.
+  Finally, the last proof $\pi_t$ is sent to the verifier (notice that each step is 
+  the same prover $\Pm$).
+
+  We want:
+  \begin{itemize}
+    \item Completeness: Given valid proof $\pi_{i-1}$ for $x_{i-1}$, $\Pm$ generates 
+      a valid proof $\pi_i$ for $x_i := F(x_{i-1}, w_i)$
+    \item Knowledge-soundness: Given a valid proof $\pi_i$ for $x_i$, extract 
+      witnesses $w_1,\dots,w_t$ such that the following holds: $x_t = F^t(x_0;w_1,\dots,w_t)$
+    \item Efficiency: Proof-size and prover/verifier-runtime should be independent of $t$
+  \end{itemize}
+  \begin{remark}
+    The generalization of IVC is PCD (Proof Carrying Data) to permits arbitrary DAGs 
+    structures. It needs upper bound on arity.
+  \end{remark}
+
+  \paragraph{IVC from recursive composition of SNARKs}
+  In each step we want a relation $R$ where we say that $x_{t+1}$ is well constructed 
+  from $x_t$ and also $\pi_t$ is verified (a verifier outputs $1$).
+  This relationship is constructed as a circuit that will be used for the ICV prover.
+  From $R$ is constructed our SNARK prover $\Pm$ used by our IVC module $\Pm_F$
+  and with our verification key $Vk$.
+  \begin{remark}
+    The circuit has a special case for the first module where isn't necessary a proof 
+    (because we don't have it).
+  \end{remark}
+
+  The verifier IVC $\Vm_F$ gets $x_1,x_t$ and $\pi_t$ and should output the verification
+  result. I need the first and last step of the computation.
+
+  For the properties, we've that:
+  \begin{itemize}
+    \item Completeness: Follows from SNARK completeness 
+    \item Soundness: Recusively extract transcript using SNARK knowledge-soundness
+      (using the verifier parameters, we can reconstruct the instance and proofs 
+      used in steps before made)
+    \item Efficiency: $\abs{\pi}$ is the size of a SNARK proof for $R$.
+      We want that the size of the SNARK proof doesn't grow and.
+      Then, it's necessary sublinear verification to bound $R$ to avoid
+      growing up each time we construct a new proof instance.
+  \end{itemize}
+
+  Notice that we're using SNARKs to avoid interactivity because we can't construct 
+  our $R$ circuits with interactivity.
+
+  We can see some applications in the follow examples.
+
+  \paragraph{Application 3: Property preserving SNARKs}
+  The goal here is to improve SNARK prover properties.
+  We've a SNARK $A$ that has a fast sequential prover (non parallel) with large memory, CRS and verifier.
+  We want to convert it to a new SNARK $A'$ with a fast parallel prover with constant memory, CRS 
+  and verifier-size.
+
+  The solution is to break up function $F$ into $T$ uniform steps $F'$ of size $\frac{\abs{F}}{T}$.
+
+  \paragraph{Application 4: SNARK composition}
+  The goal is combining SNARKs with different tradeoffs.
+  We've SNARK A (fast prover, slow verifier, large proofs) and SNARK B 
+  (slow prover, fast verifier, small proofs, ZK) and we want a SNARK C 
+  (fast prover and verifier, small proofs, ZK).
+
+  The solution is to use SNARK B to prove correctness of SNARK A.
+
+  \paragraph{Many more applications}
+  There're a lot of other applications like image provenance, verifiable delay 
+  functions, succinct blockchains, ZK cluster computing, signature aggregation, and more.
+
+  Recursive proofs are widely deployed in real world (succinct, zsSync, polygon,
+  Nexus, etc.).
+
+  \subsection{Security issues for IVC}
+  \paragraph{Arithmetizing $\Vm$}
+  The problem is that as $R$ contains $\Vm$, then $\Vm$ can't contains oracles because
+  we need to implement $\Vm$ as a circuit.
+
+  For that, we've to have in mind the following.
+  The \textit{security jump} is purely heuristic (there isn't a proof of that and also 
+  it is generally not true) and it says that if we've $(\Pm^\rho, \Vm^\rho)$ secure in RO
+  then $(\Vm,\Pm) = \textit{Fiat-Shamir}(\Pm^\rho,\Vm^\rho)$ is secure in the standard 
+  CRS model.
+  Also, there're a recent attack on GKR that relies on evaluating FS-Hash inside proofs systems
+  but recursion relies on this ability.
+
+  So, we can't have $\Vm$ containing an oracle because it's insecure and
+  there exists attacks for that.
+  The model isn't broken, the real world deployment is broken for this 
+  heuristic jump.
+\end{document}

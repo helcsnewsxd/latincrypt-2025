@@ -20,9 +20,10 @@ LatinCrypt event (and previous schools). All the content is ordered below.
 
 <div align="center">
 
-| Topic                           | Resources                                                                            |
-| ------------------------------- | ------------------------------------------------------------------------------------ |
-| Introduction to Proving Systems | [LaTeX](./ascrypto/proving-systems.tex) <br /> [PDF](./ascrypto/proving-systems.pdf) |
+| Topic                             | Resources                                                                                                                |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Introduction to Proving Systems   | [LaTeX](./ascrypto/proving-systems.tex) <br /> [PDF](./ascrypto/proving-systems.pdf)                                     |
+| Recursive Proofs and Accumulation | [LaTeX](./ascrypto/recursive-proofs-and-accumulation.tex) <br /> [PDF](./ascrypto/recursive-proofs-and-accumulation.pdf) |
 
 </div>
 
