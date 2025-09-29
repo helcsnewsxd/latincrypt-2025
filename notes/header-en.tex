@@ -1,0 +1,142 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+  \geometry{
+    a4paper,
+    total = {170mm, 257mm},
+    left = 20mm,
+    top = 20mm,
+  }
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{hyperref}
+
+\setlength{\headheight}{14pt}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+
+% Draw
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc}
+\tikzset{
+  >={Stealth[length=3mm]},
+  box/.style={draw, rounded corners, fill=blue!10, inner sep=6pt, text width=5cm, align=center, minimum height=3cm},
+  data/.style={draw, ellipse, fill=green!10, inner sep=4pt, align=center},
+}
+
+% Code environment 
+\usepackage{minted}
+\usepackage{caption}
+
+\setminted{
+  mathescape,
+  linenos,
+  numbersep=3pt,
+  frame=lines,
+  framesep=1mm,
+  baselinestretch=1,
+  fontsize=\footnotesize,
+  breaklines=true,
+  xleftmargin=1em,
+  xrightmargin=0em,
+}
+
+\newcounter{code}
+\newcommand{\listofcode}{\listof{code}{List of Codes}}
+\captionsetup[code]{labelfont=bf, name=Code}
+
+\newcommand{\codefile}[4][python]{%
+  \refstepcounter{code}%
+  \captionsetup[listing]{name=Code}%
+  \captionof{listing}{#2}%
+  \label{#3}%
+  \inputminted{#1}{#4}%
+  }
+
+% Pseudocode environment
+\usepackage[ruled,vlined]{algorithm2e}
+
+% Math environments
+\usepackage{aliascnt}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newenvironment{iproof}[1][Proof idea]
+  {
+    \begin{proof}[#1]
+      \renewcommand{\qedsymbol}{}
+  }
+  {
+  \end{proof}
+  }
+
+% Commands 
+\usepackage{xparse}
+
+\usepackage{xcolor}
+\newcommand{\todo}[1]{
+  \begin{quotation}
+    \textcolor{red}{\textbf{TODO: }#1}
+  \end{quotation}
+}
+
+\newcommand{\N}{\mathbb{N}}
+\NewDocumentCommand{\R}{g g}{
+  \IfNoValueTF{#1}
+    {\mathbb{R}}
+    {
+    \IfNoValueTF{#2}
+      {\mathbb{R}^{#1}}
+      {\mathbb{R}^{#1 \times #2}}
+    }
+}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\F}{\mathbb{F}}
+
+\newcommand{\Pm}{\mathcal{P}}
+\newcommand{\Vm}{\mathcal{V}}
+\newcommand{\Lm}{\mathcal{L}}
+\newcommand{\Em}{\mathcal{E}}
+\newcommand{\Km}{\mathcal{K}}
+
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\gen}[1]{\left\langle #1 \right\rangle}
+
+\newcommand{\getrandom}{\overset{\$}{\leftarrow}}
+
+% Document
+\usepackage{fancyhdr}
+  \fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyhead[L]{\thetitle}
+    \fancyhead[R]{\theauthor}
+  }
+
+\makeatletter
+\newcommand{\subtitle}[1]{\gdef\@subtitle{#1}}
+\newcommand{\@subtitle}{}
+\makeatother
+
+\makeatletter
+\def\@maketitle{
+  \newpage 
+  \null 
+  \vskip 1em 
+  \begin{center}
+    \let \footnote \thanks 
+      {\LARGE \@title \par}
+      \vskip 0.5em
+      {\large \@subtitle \par}
+      \vskip 1em
+      {\large \@date}
+  \end{center}
+  \par 
+  \vskip 1em 
+}
+\makeatother

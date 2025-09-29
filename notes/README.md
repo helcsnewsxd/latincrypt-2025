@@ -18,6 +18,14 @@ LatinCrypt event (and previous schools). All the content is ordered below.
 
 ## ASCrypto
 
+<div align="center">
+
+| Topic                           | Resources                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------------ |
+| Introduction to Proving Systems | [LaTeX](./ascrypto/proving-systems.tex) <br /> [PDF](./ascrypto/proving-systems.pdf) |
+
+</div>
+
 ## Main conference
 
 ## Other poster presentations

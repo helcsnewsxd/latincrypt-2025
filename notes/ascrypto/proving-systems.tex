@@ -1,0 +1,127 @@
+\input{../header-en.tex}
+
+\title{ASCrypto 2025: Introduction to Proving Systems}
+\author{Emanuel Nicolás Herrador}
+\newcommand{\speaker}{Arantxa Zapico}
+\date{September 29 of 2025}
+
+\begin{document}
+  \maketitle 
+  \noindent\begin{tabular}{@{}ll}
+    Author & \theauthor \\
+    Speaker & \speaker
+  \end{tabular}
+
+  \section{Interactive proofs}
+  The idea is to prove something to another entity efficiently without proving it 
+  at all (complete).
+  It is made interactive.
+  It must satisfy:
+  \begin{itemize}
+    \item Completeness: If something is indeed true and both (prover and verifier), follow 
+      the procedure, verifier accept 
+    \item Soundness: If something is false, then verifier rejects with overwhelming probability 
+    \item Zero-Knowledge: The verifier does not learn anything but the truth of something
+  \end{itemize}
+
+  More formally, we define something as follows.
+  Let be $R = \{(x,y) : \dots\}$ a PT relationship, and ``something is true'' if 
+  $x \in \mathcal{L}_R$ where $L$ is the language of $R$.
+
+  Prover sends messages to verifier and verifier sends challenges to our prover to prove that 
+  it's true something.
+  The challenge are random (as possible) to avoid deshonest provers.
+
+  There're some points to take in account like efficiency.
+  Things like public parameter size (pp), proof size ($|m_1| + \dots + |m_k|$), prover time
+  and verifier time.
+
+  Let's see some properties that interactive proofs can have.
+  For that, we consider $\Pm$ as honest prover and $\Pm^*$ as malicious prover.
+
+  \paragraph{Succinctness}
+  This is the first point about a SNARK.
+  We need a proving system to be succinct in communication and in verification.
+  I.e., $\sum |m_i| << \abs{w}$ and $\text{time}(\mathcal{V}) << \text{time}_R(x,w)$
+  respectively.
+
+  \paragraph{(Perfect) Completeness}
+  If $x \in \mathcal{L}_R$ and $\Pm$ follow the procedure, $\Vm$ accepts.
+  The probability must be $1$ if we want perfect completeness.
+  Formally, $Pr[\langle \Pm(pp,(x,w), \Vm(pp,x))] = 1$.
+
+  \paragraph{(Computational) Soundness}
+  If $x\notin\mathcal{L}_R$ then $\Vm$ rejects with overwhelming probability.
+  I.e., if $\nexists w : (xm,w) \in R$ then $\Vm$ rejects it with overwhelming probability.
+  Formally, $Pr[\langle \Pm^*(pp,x),\Vm(pp,x)\rangle \leq \text{negl}(\lambda)$
+
+  \paragraph{Knowledge-soundness}
+  There exists a PT algorithm $\Em$, the extractor, such that for every malicious prover $\Pm^*$,
+  then $Pr[(x,w) \in R : w \leftarrow \Em^{\Pm^*}(x)] - Pr[\langle \Pm^*(x),\Vm(x)\rangle = 1] \leq \text{negl}(\lambda)$
+
+  An argument that satisfy Knowledge-soundness is an argument of knowledge.
+  I.e., Knowledge-soundness is more powerful that soundness.
+
+  \subsection{SNARK(G)s}
+  It's one way to construct it.
+  
+  \paragraph{Tool 1: Interactive Oracle}
+  The prover sends message to an oracle and verifier ask questions to this oracle.
+  Then, verifier doesn't learns anything about $m_i$ because its questions are asked by the oracle.
+  The oracle works as an intermediate between them and we assume it as powerful and trusted.
+
+  \paragraph{Tool 2: Functional Commitment Scheme}
+  We can't trust to an oracle.
+  Therefore, we've to use a commitment scheme to replace this oracle when $\Pm$ sends 
+  commitments and also make computations of $f$; $\Pm$ also sends the proof.
+  The scheme is as follows: $\Pm$ sends a commitment of $m_1$, then $\Vm$ ask for $f(m_1,\alpha_1)$
+  and $\Pm$ reply with $y \leftarrow f(m_1,\alpha_1)$ and $\pi \leftarrow \text{Open}(f, y)$ as the proof.
+  Finally, $\Vm$ can do the verification with $\text{Verify}(y,\text{com}_1,\alpha_1,\pi)$.
+
+  Notice that the succinctness of this scheme is based in the commitments (as for example, 
+  proof size is the size of commits and $pp \leftarrow CS \cdot \mathcal{K}$).
+
+  As Oracle is an idealized model, here we don't have cryptographic assumptions.
+  However, we've it in the commitment scheme.
+
+  \paragraph{From interactive to non-interactive proofs}
+  With that we construct an interactive succinct argument and we want to construct a non-interactive 
+  succinct argument.
+  For that we'll use a hash function $H : \{0,1\}^* \to \{0,1\}^{256}$.
+  And we want that for this function the following problems are harder to solve (computationally):
+  \begin{itemize}
+    \item Collision resistant: Find $x,y : H(x) = H(y)$
+    \item Pre-image resistant: Given $z$, find $x : H(x) = z$
+    \item Second pre-image resistant : Given $x$, find $y : H(x) = H(y)$
+  \end{itemize}
+
+  Here, all the messages (commitments) and challenge answers are sent by $\Pm$ once.
+  Therefore, we want a way for $\Pm$ to generate random challenges to solve and prove that 
+  they are random.
+
+  Here we'll use \textbf{Fiat-Shamir Heuristic}.
+  The challenge is created with the hash of all the public information gotten before.
+  I.e., for example, $a_i = H(x,\text{com}_1,\dots,\text{com}_i)$.
+  Let's say that $\pi$ is all the proof sent by $\Pm$.
+  Then, it's secure under the random oracle model.
+
+  We've for knowledge soundness:
+  \begin{equation*}
+    \begin{aligned}
+      &pp \leftarrow \mathcal{K} \\ 
+      &(x,\pi) \leftarrow \Pm^*(pp) \\ 
+      &w \leftarrow \Em(pp, x, \pi) \\
+      &Pr\left[(x,w) \notin R \land \Vm(pp,x,\pi) = 1\right] \leq \text{negl}(\lambda)
+    \end{aligned}
+  \end{equation*}
+
+  \subsection{Short summary}
+  We saw:
+  \begin{itemize}
+    \item SNARK: Succinct Non-interactive Argument of Knowledge 
+    \item SNARG: Succinct Non-interactive Argument
+    \item Efficiency: prover/verifier time, proof/pp size 
+    \item Security: Setup (trusted/transparent), model (ROM) and assumptions (discrete log)
+  \end{itemize}
+  And most of it depends on the commitment scheme.
+\end{document}
