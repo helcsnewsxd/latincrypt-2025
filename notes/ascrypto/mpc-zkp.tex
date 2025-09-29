@@ -1,0 +1,122 @@
+\input{../header-en.tex}
+
+\title{ASCrypto 2025: MPC and ZKP}
+\author{Emanuel Nicolás Herrador}
+\newcommand{\speaker}{Sophia Yakoubov}
+\date{September 29-30 of 2025}
+
+\begin{document}
+  \maketitle 
+  \noindent\begin{tabular}{@{}ll}
+    Author & \theauthor \\
+    Speaker & \speaker
+  \end{tabular}
+
+  \section{Example: Prove sudoku solvability}
+  We can see it with an example if Alice wants to prove Dani that she knows the 
+  solution of a Sudoku problem.
+
+  Here, we're focused in completeness (if the statement is true, Dani accept),
+  soundness (if the statement is false, Dani rejects even if Alice cheats) 
+  and zero knowledge (Dani learns nothing other than the fact that the statement is true).
+  The way to formalize ZK is via the existence of a simulator:
+  $\forall \text{ PPT } D^*, \exists \text{ PPT } S : \text{VIEW}(D^*) \equiv S(x)$ where PPT 
+  is probabilistic polynomial time and $D^*$ is malicious.
+
+  \paragraph{First try}
+  The way to solve it is doing a permutation of the numbers in the sudoku and then send it 
+  to Dani.
+  He should check the constraints and if the permutation is okay.
+  Therefore, we get completeness.
+  For soundness, it holds because if Alice could fool Dani then she could solve the sudoku 
+  and then the existence of a solution for this sudoku instance holds.
+  However, we can't have ZK because Dani can very much reverse engineer Alice solution.
+
+  \paragraph{Second try}
+  Alice can send only an specific row with permutated numbers.
+  Here, we've completeness and ZK, but not soundness obviously.
+
+  \paragraph{Third try}
+  Now, Alice starts sending the sudoku empty and Dani can ask to open a constrain $i$.
+  Then, Alice shows the sudoku with this constrain (and the other numbers blocked).
+  Therefore, here we've completeness and ZK.
+  We can create a simulator and it works with probability $\frac{1}{28}$ where $28$
+  is the total of constraints.
+  But it doesn't have soundness because exists a chance where Alice cheats and 
+  answer correctly to Dani.
+  If Alice cheated, she might get away with it with probability less or equal to $\frac{27}{28}$.
+
+  The solution for that is repeating it $k$ times such that $\left(\frac{27}{28}\right)^k$ is small enough.
+  With that in mind, we can solve soundness problem without getting away ZK.
+
+  \begin{remark}
+    The constraints are revealing a column, row, square or the initial sudoku conditions.
+    Each one is made with different permutations, so Dani doesn't learns anything.
+  \end{remark}
+
+  \paragraph{How to do this online?}
+  Here we can use commitments.
+  The properties here are hiding (commit reveals nothing about what's inside without 
+  the key) and binding (commit can only be opened to one thing).
+
+  Each property can be perfect (unbreakable even with unlimited resources)
+  or computational (reliant on the hardness of some problem).
+
+  To construct it, Alice sends the full sudoku with commitments and when Dani ask for 
+  constraint $i$, Alice answer with the key for this constraint letting Dani open it.
+  Here, we get completeness, soundness (from binding) and ZK (from hiding).
+
+  \paragraph{In reality}
+  In practice we want to prove thinks like identity or possession of credentials,
+  correct computation, or more generally knowledge/existence of $w$ such that $R(x,w)=1$.
+  A way to solve it is transform a problem to a sudoku that can be solved like that.
+  However, the sudoku will be bigger and then it will be inefficient.
+
+  \section{Multi-Party Computation}
+  \paragraph{First example}
+  Suppose Alice and Dani picks each one a random number between 1 and 10.
+  We want privacy, i.e., if $x_A \neq x_D$ that is all they learn.
+  A way to do that is closing eyes and open it in the corresponding $x$-th second.
+  If they opens it at the same time, then they've the same number.
+  Otherwise, not.
+
+  If we've more people, we want correctness and $t$-privacy (the combined views of 
+  $t$ or fewer participants reveal nothing other than $y$).
+
+  \section{ZKP from MPC}
+  \paragraph{Attempt 1}
+  We want to use a MPC protocol that garantice privacy between the two parties.
+  So the communication complexity here is $\text{poly}(k\abs{R})$ but using lightweight
+  tools (commitments) reducing to sudoku.
+  However, if we run 2PC, the complexity is better $O(k\abs{R})$ but with heavyweight
+  tools (like public key operations).
+
+  We want to construct MPC from lightweight tools.
+  With more participants, we can get $t$-privacy for $t < \frac{n}{2}$ using only 
+  lightweight tools.
+  However, there are another way using randomness.
+
+  \paragraph{Attempt 2}
+  In this attempt Alice runs the MPC protocol in her mind (for 3 parties).
+  We're supposing MPC with 1-privacy and perfect correctness.
+
+  The protocol can be seen as the sudoku protocol (with commitments) and where the 
+  constraint $i$ is that party $i$ did not cheat and output is $1$.
+  Here, the communication between MPC nodes is commitment and also the party choices.
+
+  In this case if Alice runs MPC honestly then all works and we've completeness (that 
+  follows form MPC correctness).
+  For soundness, we've it because we've perfect correctness (assumption about the 
+  MPC protocol) and, therefore, if all of them hold, the statement is true.
+  Therefore, to convince Dani, Alice must cheat on behalf of at least one party.
+  The probability is $\frac{2}{3}$ and therefore repeating it $k$ times the probability will
+  be small enough: $\left(\frac{2}{3}\right)^k$.
+  However, here we don't have ZK.
+  The ZK can be solved using secret sharing.
+
+  \paragraph{Results of this way to solve the problem}
+  Here, if we run MPC in the head, the communication complexity will be $O(k\abs{\text{VIEW}}) = O(k\abs{R})$
+  and the tools used is lightweight ones (commitments).
+  Therefore, it's better than the another two ways (reducing to sudoku problem 
+  or running 2MPC in the two parties Alice and Dani).
+\end{document}
