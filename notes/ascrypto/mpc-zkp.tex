@@ -119,4 +119,63 @@
   and the tools used is lightweight ones (commitments).
   Therefore, it's better than the another two ways (reducing to sudoku problem 
   or running 2MPC in the two parties Alice and Dani).
+
+  \subsection{A concrete lightweight MPC scheme}
+  If we want to have MPC from correlated randomness, it's important to
+  express $f$ as a circuit, and the idea is that for Bob and Charly, we've the 
+  invariant that says: for wire value $x$, we've $x = x_B + x_C \pmod{m}$.
+  The input $x$ is the secret share $x$ and to open $x$, they have to share their parts between them.
+
+  Now, if we want to add two values $x,y$, we just have to add individual parts:
+  $z = z_B + z_C \pmod{m}$ with $z_B = x_B + y_B$ and $z_C = x_C + y_C$.
+
+  For multiplication, we've that $z = x_By_B + x_Cy_C + x_By_C + x_Cy_B$.
+  We've two terms with a value from Charly and the other from Bob.
+  So, the idea is to add Eve in the MPC calculation to help us with it (we won't 
+  go in more detail).
+  For that, we've some openings and additions to do.
+
+  And finally, to reveal and show the output, they only have to open $y$ and send it to Eve.
+  It has a ZK property and we can create our simulators for Eve and Bob/Charly.
+
+  \subsection{Round parallelization}
+  If we parallelize the rounds, completeness and soundness holds, but we've to analyze 
+  deeper the design to adapt it for ZK.
+  If Dani is honest, it works but if Dani is not honest then we don't know if
+  it has ZK (because we can't make our simulator).
+  However, there're workarounds for this problem.
+  One way to do that is letting Dani prove knowledge of their choices first and then 
+  running an knouledge-extractor to get the indices that Dani chooses and then run the simulator.
+
+  Another way to solve this problem is don't letting Dani pick the random indices.
+  Then, Alice will pick her own random challenges.
+  To make it fair for the proof to Dani, we'll use Fiat-Shamir Heuristic (as $H$ random oracle).
+  
+  \subsection{Better communication efficiency}
+  The question, now, is if we can avoid repetition.
+  For one round we saw that Alice only needs to cheat on behalf of one party, so 
+  bad probability in soundness is $\frac{2}{3}$.
+  The solution is to have $t$ challenges and run, instead of $3$MPC, a larger MPC set (more nodes).
+  So, we want this MPC with $t$-privacy and the probability to get unlucky now (for Dani)
+  is $\frac{n-t}{n}$.
+
+  Also, we'll want this MPC with perfect correctness even if up to $t$ parties cheat.
+  So, Alice needs to cheat on behalf of $t+1$ parties.
+  The probability, now, for Dani to get unlucky is $\frac{\binom{n-(t+1)}{t}}{\binom{n}{t}} = \text{negl}$.
+
+  With that, we've completeness, soundness and ZK.
+  Also, the communication complexity is the same as before $O(t\abs{\text{VIEW}}) = O(k\abs{R})$.
+  But if we use a very special MPC (we won't talk about that), we can do better:
+  $O(\abs{R}) + \text{poly}(k,\log(\abs{R}))$.
+
+  \subsection{In reality}
+  Repetition performs better than parallelism and also this schemes asymptotically 
+  loses to zk-STARKs/zk-SNARKs, but wins for small computations.
+  As an application, this protocol gives us efficient post-quantum digital signatures
+  (because it does small and efficient computation).
+
+  \section{MPC from ZKP}
+  The idea is that every time each party sends a message, it proves that it runs honestly.
+  It's a general way to transform a protocol with pasive security to active security.
+  However, the messages are more complex because each one is attached with a proof of correct behaviour.
 \end{document}
