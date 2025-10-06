@@ -7,12 +7,12 @@ LatinCrypt event (and previous schools). All the content is ordered below.
 
 <div align="center">
 
-| Topic                   | Resources                                                                                              |
-| ----------------------- | ------------------------------------------------------------------------------------------------------ |
-| Elliptic Curves         | [LaTeX notes](./catiocrypto/elliptic-curves.tex) <br /> [PDF notes](./catiocrypto/elliptic-curves.pdf) |
-| Isogenies               | [Notes](./catiocrypto/isogenies.pdf)                                                                   |
-| Multi-Party Computation | [LaTeX notes](./catiocrypto/mpc.tex) <br /> [PDF notes](./catiocrypto/mpc.pdf)                         |
-| Zero-Knowledge Proofs   | [LaTeX notes](./catiocrypto/zkp.tex) <br /> [PDF notes](./catiocrypto/zkp.pdf)                         |
+| Topic                   | Speaker               | Resources                                                                                              |
+| ----------------------- | --------------------- | ------------------------------------------------------------------------------------------------------ |
+| Elliptic Curves         | Armando Faz-Hernandez | [LaTeX notes](./catiocrypto/elliptic-curves.tex) <br /> [PDF notes](./catiocrypto/elliptic-curves.pdf) |
+| Isogenies               | Valerie Gilchrist     | [Notes](./catiocrypto/isogenies.pdf)                                                                   |
+| Multi-Party Computation | Eduardo Soria-Vázquez | [LaTeX notes](./catiocrypto/mpc.tex) <br /> [PDF notes](./catiocrypto/mpc.pdf)                         |
+| Zero-Knowledge Proofs   | Armando Faz-Hernandez | [LaTeX notes](./catiocrypto/zkp.tex) <br /> [PDF notes](./catiocrypto/zkp.pdf)                         |
 
 </div>
 
@@ -20,12 +20,12 @@ LatinCrypt event (and previous schools). All the content is ordered below.
 
 <div align="center">
 
-| Topic                             | Resources                                                                                                                |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Introduction to Proving Systems   | [LaTeX](./ascrypto/proving-systems.tex) <br /> [PDF](./ascrypto/proving-systems.pdf)                                     |
-| Recursive Proofs and Accumulation | [LaTeX](./ascrypto/recursive-proofs-and-accumulation.tex) <br /> [PDF](./ascrypto/recursive-proofs-and-accumulation.pdf) |
-| Introduction to zk-STARKs         |                                                                                                                          |
-| MPC and ZKP                       | [LaTeX](./ascrypto/mpc-zkp.tex) <br /> [PDF](./ascrypto/mpc-zkp.pdf)                                                     |
+| Topic                             | Speaker         | Resources                                                                                                                                                                                 | Recommended materials                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Introduction to Proving Systems   | Arantxa Zapico  | [LaTeX](./ascrypto/proving-systems.tex) <br /> [PDF](./ascrypto/proving-systems.pdf)                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Recursive Proofs and Accumulation | Benedikt Bünz   | [LaTeX](./ascrypto/recursive-proofs-and-accumulation.tex) <br /> [PDF](./ascrypto/recursive-proofs-and-accumulation.pdf)                                                                  | [Proofs, Arguments, and Zero-Knowledge](https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.pdf) <br /> [ProtoStar: Generic Efficient Accumulation/Folding for Special Sound Protocols](https://eprint.iacr.org/2023/620) <br /> See talks in YouTube <br /> [Introduction to Modern Cryptography](https://eclass.uniwa.gr/modules/document/file.php/CSCYB105/Reading%20Material/%5BJonathan_Katz%2C_Yehuda_Lindell%5D_Introduction_to_Mo%282nd%29.pdf) <br /> [Cryptography course in Coursera](https://www.coursera.org/learn/crypto) |
+| Introduction to zk-STARKs         | Alan Szepieniec | [Introduction to STARKs](https://asz.ink/presentations/2025-09-18-Introduction-to-STARKs.pdf) <br /> [Advanced zk-STARKs](https://asz.ink/presentations/2025-09-18-Advanced-zkSTARKs.pdf) | [Anatomy of a STARK](https://aszepieniec.github.io/stark-anatomy/) <br /> [BrainSTARK](https://aszepieniec.github.io/stark-brainfuck/)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| MPC and ZKP                       | Sophia Yakoubov | [LaTeX](./ascrypto/mpc-zkp.tex) <br /> [PDF](./ascrypto/mpc-zkp.pdf)                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
 </div>
 
@@ -84,3 +84,12 @@ Springer.
 - **(very) Applied cryptography from the ground or How can cryptography be
   useful for Civil Society in LATAM** (Stéphane Labarthe)
 - **How to Compute User Population Analytics Privately?** (Mariana Raykova)
+
+### Workshop MenezesFest
+
+Some of the recommendations made here to read and see are the following:
+
+- [Another Look at Provable Security](https://www.math.uwaterloo.ca/~ajmeneze/anotherlook/)
+- [Cryptography 101 with Alfred Menezes](https://cryptography101.ca/)
+- [Analytic Combinatorics](https://algo.inria.fr/flajolet/Publications/book.pdf)
+- [HandBook of Applied Cryptography](https://theswissbay.ch/pdf/Gentoomen%20Library/Cryptography/Handbook%20of%20Applied%20Cryptography%20-%20Alfred%20J.%20Menezes.pdf)
