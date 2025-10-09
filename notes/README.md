@@ -7,12 +7,12 @@ LatinCrypt event (and previous schools). All the content is ordered below.
 
 <div align="center">
 
-| Topic                   | Speaker               | Resources                                                                                              |
-| ----------------------- | --------------------- | ------------------------------------------------------------------------------------------------------ |
-| Elliptic Curves         | Armando Faz-Hernandez | [LaTeX notes](./catiocrypto/elliptic-curves.tex) <br /> [PDF notes](./catiocrypto/elliptic-curves.pdf) |
-| Isogenies               | Valerie Gilchrist     | [Notes](./catiocrypto/isogenies.pdf)                                                                   |
-| Multi-Party Computation | Eduardo Soria-Vázquez | [LaTeX notes](./catiocrypto/mpc.tex) <br /> [PDF notes](./catiocrypto/mpc.pdf)                         |
-| Zero-Knowledge Proofs   | Armando Faz-Hernandez | [LaTeX notes](./catiocrypto/zkp.tex) <br /> [PDF notes](./catiocrypto/zkp.pdf)                         |
+| Topic                   | Speaker               | Resources                                                                                                                                                                                                    |
+| ----------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Elliptic Curves         | Armando Faz-Hernandez | [Slides](./catiocrypto/elliptic-curves-slides.pdf) <br /> [LaTeX notes](./catiocrypto/elliptic-curves.tex) <br /> [PDF notes](./catiocrypto/elliptic-curves.pdf)                                             |
+| Isogenies               | Valerie Gilchrist     | [Notes](./catiocrypto/isogenies.pdf)                                                                                                                                                                         |
+| Multi-Party Computation | Eduardo Soria-Vázquez | [Secret sharing slides](./catiocrypto/mpc-secret-sharing-slides.pdf) <br /> [MPC slides](./catiocrypto/mpc-slides.pdf) <br /> [LaTeX notes](./catiocrypto/mpc.tex) <br /> [PDF notes](./catiocrypto/mpc.pdf) |
+| Zero-Knowledge Proofs   | Armando Faz-Hernandez | [Slides](./catiocrypto/zkp-slides.pdf) <br /> [LaTeX notes](./catiocrypto/zkp.tex) <br /> [PDF notes](./catiocrypto/zkp.pdf)                                                                                 |
 
 </div>
 
